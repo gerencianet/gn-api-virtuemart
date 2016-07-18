@@ -22,11 +22,11 @@ Caso você tenha alguma dúvida ou sugestão, entre em contato conosco pelo site
 3. Habilite o plugin aqui Administrar Plugins
 4. Instale Plugin por esta tela Métodos de pagamento
 4.1. Clique em Novo Método de Pagamento e preencha as informações:
-* Nome do Pagamento: Cartões de crédito ou Boleto Bancário ( Gerencianet )
-* Publicado: Sim
-* Descrição do pagamento: Pague com Cartão de Crédito ou Boleto Bancário
-* Método de pagamento: Gerencianet
-* Grupo de Compradores: -default-
+- Nome do Pagamento: Cartões de crédito ou Boleto Bancário ( Gerencianet )
+- Publicado: Sim
+- Descrição do pagamento: Pague com Cartão de Crédito ou Boleto Bancário
+- Método de pagamento: Gerencianet
+- Grupo de Compradores: -default-
 4.2. Clique em "Salvar".
 5. Na aba "Configurações", preencha os dados:
 
@@ -51,11 +51,12 @@ Configurações de Pagamento
 * Ativar Boleto (Sim ou Não)
 * Ativar Cartões de Crédito (Sim ou Não)
 
+
 Configurações do Boleto Bancário
 * Dias para vencimento
-* Desconto para pagamento no Boleto
+- Desconto para pagamento no Boleto
 
-6. Recomendamos que antes de disponibilizar pagamentos pela Gerencianet, o lojista realize testes de cobrança com o sandbox(ambiente de testes) ativado para verificar se o procedimento de pagamento está acontecendo conforme esperado.
+Recomendamos que antes de disponibilizar pagamentos pela Gerencianet, o lojista realize testes de cobrança com o sandbox(ambiente de testes) ativado para verificar se o procedimento de pagamento está acontecendo conforme esperado.
 
 
 ## Requisitos
