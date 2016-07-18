@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension version="1.5" type="plugin" group="vmpayment" method="upgrade">
+    <name>VM Payment, Gerencianet</name>
+    <creationDate>Julho 2016</creationDate>
+    <author>Gerencianet</author>
+    <authorUrl>http://www.gerencianet.com.br</authorUrl>
+    <copyright>Copyright (C) 2016. All rights reserved.</copyright>
+    <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
+    <version>0.1.0</version>
+    <description>Plugin de pagamento
+        &lt;div style=&quot;background:#E5F5FF;border:1px solid #99D6FF;padding:10px;margin:10px; -box-shadow: inset 0px 0px 10px #fff, 0px 0px 5px #ccc; -webkit-box-shadow: inset 0px 0px 10px #fff, 0px 0px 5px #ccc; -moz-box-shadow: inset 0px 0px 10px #fff, 0px 0px 5px #ccc;font-weight:normal;&quot;&gt;
+        &lt;h1&gt;Plugin de pagamento Gerencianet para Virtuemart v0.1.0&lt;/h1&gt;
+        &lt;div style=&quot;float:right;width: 20%&quot;&gt;
+        &lt;img src=&quot;../plugins/vmpayment/gerencianet/logo_gerencianet.png&quot; /&gt;
+        &lt;/div&gt;
+        &lt;div&gt;&lt;em&gt;Passo 1&lt;/em&gt; - Crie sua conta Gerencianet ( caso não exista ). &lt;/div&gt;
+        &lt;div&gt;&lt;em&gt;Passo 2&lt;/em&gt; - Crie 3 campos extras no Virtuemart: "numero" e "bairro" "data_nascimento". O número da residência, bairro e data de nascimento são dados obrigatórios para pagamento com cartão de crédito. Se não for informado no formulário de cadastro ou no carrinho, será solicitado no ato do pagamento. &lt;/div&gt;
+        &lt;div&gt;&lt;em&gt;Passo 3&lt;/em&gt; - Habilite o plugin aqui &lt;a href=&quot;index.php?option=com_plugins&amp;view=plugins&amp;filter_search=gerencianet&quot;&gt;Administrar Plugins&lt;/a&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;em&gt;Passo 4&lt;/em&gt; - Instale Plugin por esta tela &lt;a href=&quot;index.php?option=com_virtuemart&amp;view=paymentmethod&quot;&gt;Métodos de pagamento&lt;/a&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;em&gt;Passo 4.1&lt;/em&gt; - &lt;b&gt;Clique em Novo Método de Pagamento&lt;/b&gt; e preencha as informações:&lt;/div&gt;
+        &lt;div&gt;* Nome do Pagamento: &lt;b&gt;Cartões de crédito ou Boleto Bancário ( Gerencianet )&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;* Publicado: &lt;b&gt;Sim&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;* Descrição do pagamento: &lt;b&gt;Pague com Cartão de Crédito ou Boleto Bancário&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;* Método de pagamento: &lt;b&gt;Gerencianet&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;* Grupo de Compradores: &lt;b&gt;-default-&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;em&gt;Passo 4.2&lt;/em&gt; - &lt;b&gt;Clique em Salvar&lt;/b&gt;.&lt;/div&gt;
+        &lt;div&gt;&lt;em&gt;Passo 5&lt;/em&gt; - Na &lt;b&gt;aba configurações&lt;/b&gt;, preencha os dados:&lt;/div&gt;
+
+        &lt;div&gt; &lt;br /&gt;Configurações do Plugin de Pagamento &lt;/div&gt;
+        &lt;div&gt;* Modo de teste &lt;b&gt;( Sim ou Não ) &lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;* Client ID Desenvolvimento &lt;b&gt; Conte Gerencianet > API > Aplicações > Sua Aplicação > Client ID Desenvolvimento &lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;* Client Secret Desenvolvimento &lt;b&gt; Conte Gerencianet > API > Aplicações > Sua Aplicação > Client Secret Desenvolvimento &lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;* Client ID Produção &lt;b&gt; Conte Gerencianet > API > Aplicações > Sua Aplicação > Client ID Produção &lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;* Client Secret Produção &lt;b&gt; Conte Gerencianet > API > Aplicações > Sua Aplicação > Client Secret Produção &lt;/b&gt;&lt;/div&gt;
+
+        &lt;div&gt; &lt;br /&gt;Campos Extras Obrigatórios &lt;/div&gt;
+        &lt;div&gt;* Campo Logradouro ( do endereço ) &lt;/div&gt;
+        &lt;div&gt;* Campo Bairro &lt;/div&gt;
+        &lt;div&gt;* Campo Número ( do endereço ) &lt;/div&gt;
+        &lt;div&gt;* Campo Complemento ( do endereço ) &lt;/div&gt;
+        &lt;div&gt;* Campo Telefone ( do cliente ) &lt;/div&gt;
+        &lt;div&gt;* Campo CPF ( do cliente ) &lt;/div&gt;
+        &lt;div&gt;* Campo Data de Nascimento ( do cliente ) &lt;/div&gt;
+
+        &lt;div&gt; &lt;br /&gt; Configurações de Pagamento &lt;/div&gt;
+        &lt;div&gt;* Ativar Boleto &lt;b&gt; (Sim ou Não) &lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;* Ativar Cartões de Crédito &lt;b&gt; (Sim ou Não) &lt;/b&gt;&lt;/div&gt;
+
+        &lt;div&gt; &lt;br /&gt; Configurações do Boleto Bancário &lt;/div&gt;
+        &lt;div&gt;* Dias para vencimento &lt;/div&gt;
+        &lt;div&gt;* Desconto para pagamento no Boleto &lt;/div&gt;
+
+        &lt;/div&gt;
+        &lt;div&gt;	Licença: &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;GNU/GPL v3&lt;/a&gt; - Desenvolvido por Gerencianet - &lt;a href=&quot;http://www.gerencianet.com.br&quot;&gt;www.gerencianet.com.br&lt;/a&gt; 
+
+    </description>
+    <files>
+        <filename plugin="gerencianet">gerencianet.php</filename>
+        <filename>licenca-gplv3.txt</filename>
+        <filename>leiame.txt</filename>
+        <filename>gplv3-license.txt</filename>
+        <filename>logo_gerencianet.png</filename>
+        <folder>assets</folder>
+        <folder>language</folder>
+        <folder>admin</folder>
+        <folder>lib</folder>
+    </files>
+    <administration>
+        <languages folder="language">
+            <language tag="pt-BR">pt-BR.plg_vmpayment_gerencianet.ini</language>
+            <language tag="en-GB">en-GB.plg_vmpayment_gerencianet.ini</language>
+        </languages>
+    </administration>
+    <languages folder="language">
+        <language tag="pt-BR">pt-BR.plg_vmpayment_gerencianet.ini</language>
+        <language tag="en-GB">en-GB.plg_vmpayment_gerencianet.ini</language>
+    </languages>
+
+    <config>
+        <fields name="params" addfieldpath="/plugins/vmpayment/gerencianet/admin/elements/">
+            <fieldset name="vmjpluginwarning">
+                <field name="sandbox" type="radio" default="1" label="SandBox (Ambiente de testes)">
+                    <option value="1">COM_VIRTUEMART_YES</option>
+                    <option value="0">COM_VIRTUEMART_NO</option>
+                </field>
+
+                <field type="vmspacer" default="Desenvolvimento" />
+                <field name="client_id_development" type="text" size="60"  label="Client ID Desenvolvimento" description="Informe a credencial Client ID de Desenvolvimento da sua aplicação na Gerencianet" default=""/>
+                <field name="client_secret_development" type="text" size="60"  label="Client Secret Desenvolvimento" description="Informe a credencial Client Secret de Desenvolvimento da sua aplicação na Gerencianet" default=""/>
+
+                <field type="vmspacer" default="Produção" />
+                <field name="client_id_production" type="text" size="60"  label="Client ID Produção" description="Informe a credencial Client ID de Produção da sua aplicação na Gerencianet" default=""/>
+                <field name="client_secret_production" type="text" size="60"  label="Client Secret Produção" description="Informe a credencial Client Secret de Produção da sua aplicação na Gerencianet" default=""/>
+
+                <field type="vmspacer" default="Identificador da Conta" />
+                <field name="payee_code" type="text" size="60"  label="Identificador da conta" description="Informe o identificador da sua conta Gerencianet" default=""/>
+
+                <field type="vmspacer" default="Campos Extras Obrigatórios" />
+                <field name="campo_logradouro" type="vmfield" size="30"  label="Campo Logradouro ( do endereço )" description="Nome do campo Logradouro ( endereço mesmo )" default="address_1"/>
+                <field name="campo_bairro" type="vmfield" size="30"  label="Campo Bairro" description="Nome do campo Bairro" default="bairro"/>
+                <field name="campo_numero" type="vmfield" size="30"  label="Campo Número ( do endereço )" description="Nome do campo Número do Endereço do usuário" default="numero"/>
+                <field name="campo_complemento" type="vmfield" size="30"  label="Campo Complemento ( do endereço )" description="Nome do campo Complemento do Endereço" default="address_2"/>
+                <field name="campo_telefone" type="vmfield" size="30"  label="Campo Telefone ( do cliente )" description="Nome do campo Telefone " default="phone_1"/>
+                <field name="campo_cpf" type="vmfield" size="30"  label="Campo CPF ( do cliente )" description="Nome do campo CPF " default="fax"/>
+                <field name="campo_data_nascimento" type="vmfield" size="30"  label="Campo Data de Nascimento ( do cliente )" description="Nome do campo Data de Nascimento " default="data_nascimento"/>
+
+                <field type="vmspacer" default="Configuração de Status" />
+                <field name="status_cob_waiting" type="vmorderstate" default="A" label="Status de Cobrança Aguardando (WAITING)" description="Forma de pagamento selecionada. Aguardando a confirmação do pagamento." />
+                <field name="status_cob_paid" type="vmorderstate" default="C" label="Status de Cobrança Pago (PAID)" description="Pagamento Confirmado."  />
+                <field name="status_cob_unpaid" type="vmorderstate" label="Status de Cobrança Não Pago (UNPAID)" description="Não foi possível confirmar o pagamento da cobrança." />
+                <field name="status_cob_refunded" type="vmorderstate" default="R" label="Status de Cobrança Reembolsado (REFUNDED)" description="Pagamento devolvido pelo lojista ou pelo intermediador Gerencianet." />
+                <field name="status_cob_contested" type="vmorderstate" label="Status de Cobrança Contestado (CONTESTED)" description="Pagamento em processo de contestação" />
+                <field name="status_cob_canceled" type="vmorderstate" default="X" label="Status de Cobrança Cancelado (CANCELED)" description="Cobrança cancelada pelo comprador ou pelo vendedor." />
+
+                <field type="vmspacer" default="Configurações de Pagamento" />
+
+                <field name="card_option" type="radio" class="switch2" default="1" label="Habilitar Cartões de Crédito">
+                    <option value="0">COM_VIRTUEMART_NO</option>
+                    <option value="1">COM_VIRTUEMART_YES</option>
+                </field>
+                <field name="billet_option" type="radio" class="switch2" default="1" label="Habilitar Boleto Bancário">
+                    <option value="0">COM_VIRTUEMART_NO</option>
+                    <option value="1">COM_VIRTUEMART_YES</option>
+                </field>
+
+                <field type="vmspacer" default="Configurações do Boleto Bancário" />
+                <field name="billet_expiration" type="text" label="Dias para vencimento" description="Dias para vencimento do boleto após gerado" />
+                <field name="billet_discount" type="text" label="Desconto para pagamento no Boleto" description="Desconto para pagamento no boleto" />
+
+                <field type="spacer"/>
+                <field type="vmspacer" default="Licença: &lt;a href='http://www.gnu.org/licenses/gpl-3.0.html'&gt;GNU/GPL v3&lt;/a&gt; - Desenvolvido por Gerencianet - &lt;a href='http://www.gerencianet.com.br'&gt;www.gerencianet.com.br&lt;/a&gt; | &lt;a href='http://www.gerencianet.com.br'&gt;Gerencianet Pagamentos &lt;/a&gt;" />
+            </fieldset>
+        </fields>
+    </config>
+</extension>
