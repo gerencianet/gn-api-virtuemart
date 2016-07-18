@@ -21,14 +21,14 @@ Caso você tenha alguma dúvida ou sugestão, entre em contato conosco pelo site
 2. Crie 3 campos extras no Virtuemart: "numero" e "bairro" "data_nascimento". O número da residência, bairro e data de nascimento são dados obrigatórios para pagamento com cartão de crédito. Se não for informado no formulário de cadastro ou no carrinho, será solicitado no ato do pagamento.
 3. Habilite o plugin aqui Administrar Plugins
 4. Instale Plugin por esta tela Métodos de pagamento
-4.1. Clique em Novo Método de Pagamento e preencha as informações:
-- Nome do Pagamento: Cartões de crédito ou Boleto Bancário ( Gerencianet )
-- Publicado: Sim
-- Descrição do pagamento: Pague com Cartão de Crédito ou Boleto Bancário
-- Método de pagamento: Gerencianet
-- Grupo de Compradores: -default-
-4.2. Clique em "Salvar".
-5. Na aba "Configurações", preencha os dados:
+5. Clique em Novo Método de Pagamento e preencha as informações:
+Nome do Pagamento: Cartões de crédito ou Boleto Bancário ( Gerencianet )
+Publicado: Sim
+Descrição do pagamento: Pague com Cartão de Crédito ou Boleto Bancário
+Método de pagamento: Gerencianet
+Grupo de Compradores: -default-
+6. Clique em "Salvar".
+7. Na aba "Configurações", preencha os dados:
 
 Configurações do Plugin de Pagamento
 * Modo de teste ( Sim ou Não )
