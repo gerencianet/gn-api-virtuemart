@@ -405,7 +405,7 @@ class GerencianetIntegration {
 				$message = 'O valor da emissão é superior ao limite operacional da conta. Por favor, solicite que o recebedor entre em contato com o suporte Gerencianet.';
 				break;
 			case 4600073:
-				$message = 'O telefone informado não é válido.'
+				$message = 'O telefone informado não é válido.';
 				break;
 			case 4600111:
 				$message = 'valor de cada parcela deve ser igual ou maior que R$5,00';

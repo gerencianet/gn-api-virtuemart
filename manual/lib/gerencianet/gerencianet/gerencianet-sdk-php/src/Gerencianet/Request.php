@@ -26,7 +26,7 @@ class Request
         'base_url' => $this->config['baseUri'],
         'headers' => [
           'Content-Type' => 'application/json',
-          'api-sdk' => 'woocommerce-' . $composerData['version'],
+          'api-sdk' => 'virtuemart-' . $composerData['version'],
           'partner-token' => $partner_token
           ],
       ]);
