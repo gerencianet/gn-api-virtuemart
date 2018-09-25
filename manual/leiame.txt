@@ -1,41 +1,41 @@
 ========================================================================================================================================
-Plugin de pagamento Gerencianet para Virtuemart v0.1.0
+Plugin de pagamento Gerencianet para Virtuemart v0.2.0
 ========================================================================================================================================
 
-Passo 1 - Crie sua conta Gerencianet ( caso não exista ).
-Passo 2 - Crie 3 campos extras no Virtuemart: "numero" e "bairro" "data_nascimento". O número da residência, bairro e data de nascimento são dados obrigatórios para pagamento com cartão de crédito. Se não for informado no formulário de cadastro ou no carrinho, será solicitado no ato do pagamento.
+Passo 1 - Crie sua conta Gerencianet ( caso nÃ£o exista ).
+Passo 2 - Crie 3 campos extras no Virtuemart: "numero" e "bairro" "data_nascimento". O nÃºmero da residÃªncia, bairro e data de nascimento sÃ£o dados obrigatÃ³rios para pagamento com cartÃ£o de crÃ©dito. Se nÃ£o for informado no formulÃ¡rio de cadastro ou no carrinho, serÃ¡ solicitado no ato do pagamento.
 Passo 3 - Habilite o plugin aqui Administrar Plugins
-Passo 4 - Instale Plugin por esta tela Métodos de pagamento
-Passo 4.1 - Clique em Novo Método de Pagamento e preencha as informações:
-* Nome do Pagamento: Cartões de crédito ou Boleto Bancário ( Gerencianet )
+Passo 4 - Instale Plugin por esta tela MÃ©todos de pagamento
+Passo 4.1 - Clique em Novo MÃ©todo de Pagamento e preencha as informaÃ§Ãµes:
+* Nome do Pagamento: CartÃµes de crÃ©dito ou Boleto BancÃ¡rio ( Gerencianet )
 * Publicado: Sim
-* Descrição do pagamento: Pague com Cartão de Crédito ou Boleto Bancário
-* Método de pagamento: Gerencianet
+* DescriÃ§Ã£o do pagamento: Pague com CartÃ£o de CrÃ©dito ou Boleto BancÃ¡rio
+* MÃ©todo de pagamento: Gerencianet
 * Grupo de Compradores: -default-
 Passo 4.2 - Clique em Salvar.
-Passo 5 - Na aba configurações, preencha os dados:
+Passo 5 - Na aba configuraÃ§Ãµes, preencha os dados:
 
-Configurações do Plugin de Pagamento
-* Modo de teste ( Sim ou Não )
-* Client ID Desenvolvimento Conte Gerencianet > API > Aplicações > Sua Aplicação > Client ID Desenvolvimento
-* Client Secret Desenvolvimento Conte Gerencianet > API > Aplicações > Sua Aplicação > Client Secret Desenvolvimento
-* Client ID Produção Conte Gerencianet > API > Aplicações > Sua Aplicação > Client ID Produção
-* Client Secret Produção Conte Gerencianet > API > Aplicações > Sua Aplicação > Client Secret Produção
+ConfiguraÃ§Ãµes do Plugin de Pagamento
+* Modo de teste ( Sim ou NÃ£o )
+* Client ID Desenvolvimento Conte Gerencianet > API > AplicaÃ§Ãµes > Sua AplicaÃ§Ã£o > Client ID Desenvolvimento
+* Client Secret Desenvolvimento Conte Gerencianet > API > AplicaÃ§Ãµes > Sua AplicaÃ§Ã£o > Client Secret Desenvolvimento
+* Client ID ProduÃ§Ã£o Conte Gerencianet > API > AplicaÃ§Ãµes > Sua AplicaÃ§Ã£o > Client ID ProduÃ§Ã£o
+* Client Secret ProduÃ§Ã£o Conte Gerencianet > API > AplicaÃ§Ãµes > Sua AplicaÃ§Ã£o > Client Secret ProduÃ§Ã£o
 
-Campos Extras Obrigatórios
-* Campo Logradouro ( do endereço )
+Campos Extras ObrigatÃ³rios
+* Campo Logradouro ( do endereÃ§o )
 * Campo Bairro
-* Campo Número ( do endereço )
-* Campo Complemento ( do endereço )
+* Campo NÃºmero ( do endereÃ§o )
+* Campo Complemento ( do endereÃ§Ã£o )
 * Campo Telefone ( do cliente )
 * Campo CPF ( do cliente )
 * Campo Data de Nascimento ( do cliente )
 
-Configurações de Pagamento
-* Ativar Boleto (Sim ou Não)
-* Ativar Cartões de Crédito (Sim ou Não)
+ConfiguraÃ§Ãµes de Pagamento
+* Ativar Boleto (Sim ou NÃ£o)
+* Ativar CartÃµes de CrÃ©dito (Sim ou NÃ£o)
 
-Configurações do Boleto Bancário
+ConfiguraÃ§Ãµes do Boleto BancÃ¡rio
 * Dias para vencimento
 * Desconto para pagamento no Boleto
 

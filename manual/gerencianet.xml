@@ -6,10 +6,10 @@
     <authorUrl>http://www.gerencianet.com.br</authorUrl>
     <copyright>Copyright (C) 2016. All rights reserved.</copyright>
     <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <description>Plugin de pagamento
         &lt;div style=&quot;background:#E5F5FF;border:1px solid #99D6FF;padding:10px;margin:10px; -box-shadow: inset 0px 0px 10px #fff, 0px 0px 5px #ccc; -webkit-box-shadow: inset 0px 0px 10px #fff, 0px 0px 5px #ccc; -moz-box-shadow: inset 0px 0px 10px #fff, 0px 0px 5px #ccc;font-weight:normal;&quot;&gt;
-        &lt;h1&gt;Plugin de pagamento Gerencianet para Virtuemart v0.1.0&lt;/h1&gt;
+        &lt;h1&gt;Plugin de pagamento Gerencianet para Virtuemart v0.2.0&lt;/h1&gt;
         &lt;div style=&quot;float:right;width: 20%&quot;&gt;
         &lt;img src=&quot;../plugins/vmpayment/gerencianet/logo_gerencianet.png&quot; /&gt;
         &lt;/div&gt;
