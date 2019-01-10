@@ -1051,7 +1051,7 @@ jQuery(document).ready(function($){
                     $('#gn-payment-success').show();
                     $('#gerencianet-container').hide();
                     $('.charge_id_success').html(id_charge);
-                    $('#button-payment-billet').attr('href', obj.data.link);
+                    $('#button-payment-billet').attr('href', obj.data.pdf.charge);
                 } else {
                     $('#gn-pay-billet-button').prop("disabled",false);
                     $('#gn-pay-billet-button').removeClass("gn-osc-button-disabled");
@@ -1135,7 +1135,7 @@ jQuery(document).ready(function($){
                         $('#gn-payment-success').show();
                         $('#gerencianet-container').hide();
                         $('.charge_id_success').html(id_charge);
-                        $('#button-payment-billet').attr('href', obj.data.link);
+                        $('#button-payment-billet').attr('href', obj.data.pdf.charge);
                     } else {
                         $('#gn-pay-card-button').prop("disabled",false);
                         $('#gn-pay-card-button').removeClass("gn-osc-button-disabled");

@@ -1,4 +1,4 @@
-# Módulo de Integração Gerencianet para VirtueMart Oficial - Versão 0.2.0 #
+# Módulo de Integração Gerencianet para VirtueMart Oficial - Versão 0.2.1 #
 
 O módulo Gerencianet para VirtueMart permite receber pagamentos por meio do checkout transparente da nossa API.
 Compatível com o Virtuemart 3 e Joomla! 2.5.

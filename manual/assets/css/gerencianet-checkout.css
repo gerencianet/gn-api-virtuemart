@@ -781,7 +781,8 @@
 }
 
 .gn-osc-button {
-    background-color: #f26522;
+    background-color: #f37021;
+    background-image:none;
     color: #FFFFFF;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -790,6 +791,11 @@
     border: none;
     font-size: 16px;
     font-weight: 400;
+}
+.gn-osc-button:hover {
+    background-color: #c84d27;
+    background-image:none;
+    color: #FFFFFF;
 }
 
 .gn-billet-pay-info {
