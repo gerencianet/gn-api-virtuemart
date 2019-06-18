@@ -26,38 +26,41 @@ if (!class_exists('vmPSPlugin'))
 
 include_once dirname(__FILE__) . '/lib/GerencianetIntegration.php';
 
-class plgVmPaymentGerencianet extends vmPSPlugin {
+class plgVmPaymentGerencianet extends vmPSPlugin
+{
 
     public static $_this = false;
 
-    function __construct(& $subject, $config) {
+    function __construct(&$subject, $config)
+    {
         parent::__construct($subject, $config);
 
         $this->_loggable = true;
         $this->tableFields = array_keys($this->getTableSQLFields());
         $this->_tablepkey = 'id';
         $this->_tableId = 'id';
-        $varsToPush = $this->getVarsToPush ();
+        $varsToPush = $this->getVarsToPush();
         $this->setConfigParameterable($this->_configTableFieldName, $varsToPush);
 
         $this->domdocument = false;
 
         if (!class_exists('VirtueMartModelOrders'))
-            require( JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php' );
+            require(JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php');
 
         $lang = JFactory::getLanguage();
         $lang->load('plg_vmpayment_' . $this->_name, JPATH_ADMINISTRATOR);
 
         if (!class_exists('CurrencyDisplay'))
-            require( JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'currencydisplay.php' );
-        
+            require(JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'currencydisplay.php');
     }
 
-    protected function getVmPluginCreateTableSQL() {
+    protected function getVmPluginCreateTableSQL()
+    {
         return $this->createTableSQL('Payment Gerencianet Table');
     }
 
-    function getTableSQLFields() {
+    function getTableSQLFields()
+    {
         $SQLfields = array(
             'id' => 'bigint(15) unsigned NOT NULL AUTO_INCREMENT',
             'gerencianet_charge_id' => 'char(32) DEFAULT NULL',
@@ -72,11 +75,13 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
             'billet_discount' => ' decimal(10,2) DEFAULT NULL ',
             'cost_per_transaction' => ' decimal(10,2) DEFAULT NULL ',
             'cost_percent_total' => ' decimal(10,2) DEFAULT NULL ',
-            );
+        );
         return $SQLfields;
     }
 
-    function getPluginParams(){
+    function getPluginParams()
+    {
+
         $db = JFactory::getDbo();
         $sql = "select virtuemart_paymentmethod_id from #__virtuemart_paymentmethods where payment_element = 'gerencianet'";
         $db->setQuery($sql);
@@ -84,8 +89,8 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         return $this->getVmPluginMethod($id);
     }
 
-    function plgVmConfirmedOrder($cart, $order) {
-
+    function plgVmConfirmedOrder($cart, $order)
+    {
         if (!($method = $this->getVmPluginMethod($order['details']['BT']->virtuemart_paymentmethod_id))) {
             return null;
         }
@@ -96,13 +101,13 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         $this->order_id = $order['details']['BT']->order_number;
         $url  = JURI::root();
 
-        $doc = & JFactory::getDocument();
-        $url_lib      = $url. DS .'plugins'. DS .'vmpayment'. DS .'gerencianet'.DS;
-        $url_js       = $url_lib . 'assets'. DS. 'js'. DS;
-        $this->url_imagens  = $url_lib . 'imagens'. DS;
-        $url_css      = $url_lib . 'assets'. DS. 'css'. DS;
+        $doc = &JFactory::getDocument();
+        $url_lib      = $url . DS . 'plugins' . DS . 'vmpayment' . DS . 'gerencianet' . DS;
+        $url_js       = $url_lib . 'assets' . DS . 'js' . DS;
+        $this->url_imagens  = $url_lib . 'imagens' . DS;
+        $url_css      = $url_lib . 'assets' . DS . 'css' . DS;
 
-        $url_redireciona_gerencianet = JROUTE::_(JURI::root() . 'index.php?option=com_virtuemart&view=pluginresponse&task=pluginnotification&tmpl=component&pm='.$order['details']['BT']->virtuemart_paymentmethod_id);
+        $url_redireciona_gerencianet = JROUTE::_(JURI::root() . 'index.php?option=com_virtuemart&view=pluginresponse&task=pluginnotification&tmpl=component&pm=' . $order['details']['BT']->virtuemart_paymentmethod_id);
         $url_pedidos = JROUTE::_(JURI::root() . 'index.php?option=com_virtuemart&view=orders');
 
         $billet_option = $method->billet_option;
@@ -112,12 +117,12 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         $doc->addCustomTag('
             <script language="javascript">
             jQuery.noConflict();
-            var redireciona_gerencianet = "'.$url_redireciona_gerencianet.'";
-            var url_pedidos = "'.$url_pedidos.'";
+            var redireciona_gerencianet = "' . $url_redireciona_gerencianet . '";
+            var url_pedidos = "' . $url_pedidos . '";
         </script>
-        <script type="text/javascript" data-billet_active="'.$billet_option.'" data-card_active="'.$card_option.'" data-payee_code="'.$payee_code.'" data-shop_url="' . JRoute::_(JURI::root() . '/index.php?option=com_virtuemart&view=pluginresponse&task=pluginnotification&tmpl=component&gn=ajax&pm='.$order['details']['BT']->virtuemart_paymentmethod_id) . '&format=raw"  language="javascript" src="'.$url_js.'gerencianet-checkout.js"></script>
-        <script type="text/javascript" language="javascript" src="'.$url_js.'jquery.maskedinput.js"></script>
-        <link href="'.$url_css.'gerencianet-checkout.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" data-billet_active="' . $billet_option . '" data-card_active="' . $card_option . '" data-payee_code="' . $payee_code . '" data-shop_url="' . JRoute::_(JURI::root() . '/index.php?option=com_virtuemart&view=pluginresponse&task=pluginnotification&tmpl=component&gn=ajax&pm=' . $order['details']['BT']->virtuemart_paymentmethod_id) . '&format=raw"  language="javascript" src="' . $url_js . 'gerencianet-checkout.js"></script>
+        <script type="text/javascript" language="javascript" src="' . $url_js . 'jquery.maskedinput.js"></script>
+        <link href="' . $url_css . 'gerencianet-checkout.css" rel="stylesheet" type="text/css"/>
         ');
 
         $lang = JFactory::getLanguage();
@@ -129,7 +134,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         $html = "";
 
         if (!class_exists('VirtueMartModelOrders')) {
-            require( JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php' );
+            require(JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php');
         }
 
         $paymentCurrency = CurrencyDisplay::getInstance($method->payment_currency);
@@ -146,7 +151,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
         $currency = CurrencyDisplay::getInstance('', $order['details']['BT']->virtuemart_vendor_id);
         $html .= $this->getHtmlRowBE('GERENCIANET_ORDER_NUMBER', $order['details']['BT']->order_number);
-        $html .= $this->getHtmlRowBE('GERENCIANET_AMOUNT', GerencianetIntegration::formatCurrencyBRL(intval($order['details']["BT"]->order_total*100))) . '</table>' . "\n";
+        $html .= $this->getHtmlRowBE('GERENCIANET_AMOUNT', GerencianetIntegration::formatCurrencyBRL(intval($order['details']["BT"]->order_total * 100))) . '</table>' . "\n";
 
         $this->_virtuemart_paymentmethod_id  = $order['details']['BT']->virtuemart_paymentmethod_id;
         $dbValues['order_number']            = $order['details']['BT']->order_number;
@@ -159,15 +164,15 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
         $html .= $this->gerencianetGenerateForm($method, $order);
         return $this->processConfirmedOrderPaymentResponse(1, $cart, $order, $html, $dbValues['payment_name'], $novo_status);
-
     }
 
-    public function gerencianetGenerateForm($method, $order) {
+    public function gerencianetGenerateForm($method, $order)
+    {
 
-        $doc =& JFactory::getDocument();
+        $doc = &JFactory::getDocument();
         $doc->addScript($this->url_js);
 
-        $order_total = intval(round($order['details']["BT"]->order_total,2)*100);
+        $order_total = intval(round($order['details']["BT"]->order_total, 2) * 100);
 
         $sandbox = $method->sandbox;
 
@@ -178,28 +183,26 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         $exibe = $db->loadObjectList();
 
         $shipping = 0;
-        foreach ( $exibe as $result) {
-            {
-                $shipping_cost = (int)(((Float)$result->order_shipment)*100);
-                if ($shipping_cost > 0)
-                {
-                    $shipping = (int) $shipping_cost;
+        foreach ($exibe as $result) { {
+                $shipping_cost = (int)(((Float)$result->order_shipment) * 100);
+                if ($shipping_cost > 0) {
+                    $shipping = (int)$shipping_cost;
                 } else {
                     $shipping = 0;
                 }
             }
         }
-        
-        $discount = floatval(preg_replace( '/[^0-9.]/', '', str_replace(",",".",$method->billet_discount)));
-        $discount_value = intval(($order_total-$shipping)*($discount/100));
-        $discount_formatted =  str_replace(",",".",$discount);
+
+        $discount = floatval(preg_replace('/[^0-9.]/', '', str_replace(",", ".", $method->billet_discount)));
+        $discount_value = intval(($order_total - $shipping) * ($discount / 100));
+        $discount_formatted =  str_replace(",", ".", $discount);
 
         $billet_option = $method->billet_option;
         $card_option = $method->card_option;
-        $order_total_billet = $order_total-$discount_value;
-        $order_total_card =$order_total;
-        $order_billet_discount=GerencianetIntegration::formatCurrencyBRL($discount_value);
-        $order_total_with_billet_discount = GerencianetIntegration::formatCurrencyBRL($order_total-$discount_value);
+        $order_total_billet = $order_total - $discount_value;
+        $order_total_card = $order_total;
+        $order_billet_discount = GerencianetIntegration::formatCurrencyBRL($discount_value);
+        $order_total_with_billet_discount = GerencianetIntegration::formatCurrencyBRL($order_total - $discount_value);
 
         $gn_warning_sandbox_message = JText::_('VMPAYMENT_GERENCIANET_SANDBOX_MODE_ACTIVE_NOTIFICATION');
         $gn_mininum_gn_charge_price = JText::_('VMPAYMENT_GERENCIANET_MINIMUM_VALUE');
@@ -236,7 +239,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         $campo_data_nascimento = $method->campo_data_nascimento;
 
         $order_number = $order['details']["BT"]->order_number;
-        $customer_name = $order["details"]["BT"]->first_name .' '. $order["details"]["BT"]->last_name;
+        $customer_name = $order["details"]["BT"]->first_name . ' ' . $order["details"]["BT"]->last_name;
         $order_email = $order["details"]["BT"]->email;
         $customer_number = $order["details"]["BT"]->virtuemart_user_id;
         $customer_address = $order["details"]["BT"]->$campo_logradouro;
@@ -248,16 +251,16 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         $customer_state = ShopFunctions::getStateByID($order["details"]["BT"]->virtuemart_state_id, "state_2_code");
 
         $customer_phone = $order["details"]["BT"]->phone_1;
-        $replacements = array(" ", "-", "(",")");
+        $replacements = array(" ", "-", "(", ")");
         $customer_phone = str_replace($replacements, "", $customer_phone);
-        $customer_phone = '('.substr($customer_phone,0,2).')'.substr($customer_phone,2,4).'-'.substr($customer_phone,6,4);
+        $customer_phone = '(' . substr($customer_phone, 0, 2) . ')' . substr($customer_phone, 2, 4) . '-' . substr($customer_phone, 6, 4);
 
         $customer_zip = $order["details"]["BT"]->zip;
         $replacements = array(" ", ".", ",", "-", ";");
         $customer_zip = str_replace($replacements, "", $customer_zip);
-        $customer_zip = substr($customer_zip,0,5).'-'.substr($customer_zip,5,3);
+        $customer_zip = substr($customer_zip, 0, 5) . '-' . substr($customer_zip, 5, 3);
 
-        $billet_discount_formatted = str_replace(".",",",$discount);
+        $billet_discount_formatted = str_replace(".", ",", $discount);
 
         $gnIntegration = $this->configGnIntegration($order['details']['BT']->virtuemart_paymentmethod_id);
 
@@ -265,27 +268,27 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
         $url  = JURI::root();
 
-        $url_lib      = $url. DS .'plugins'. DS .'vmpayment'. DS .'gerencianet'.DS;
+        $url_lib      = $url . DS . 'plugins' . DS . 'vmpayment' . DS . 'gerencianet' . DS;
 
         $conteudo = '
         <div id="gerencianet-container">
-        <input type="hidden" id="order_total" name="order_total" value="'.$order_total.'" />
-        <input type="hidden" id="order_number" name="order_number" value="'.$order_number.'" />
+        <input type="hidden" id="order_total" name="order_total" value="' . $order_total . '" />
+        <input type="hidden" id="order_number" name="order_number" value="' . $order_number . '" />
         ';
         if ($sandbox == "1") {
             $conteudo .= '<div class="gn-osc-alert-payment" id="wc-gerencianet-messages-sandbox">
-                <div>'.$gn_warning_sandbox_message.'</div>
+                <div>' . $gn_warning_sandbox_message . '</div>
             </div>';
         }
 
         $conteudo .= '<div class="gn-osc-warning-payment" id="wc-gerencianet-messages">';
-        if (($card_option && $order_total_card<500) && ($billet_option && $order_total_billet<500)) {
-            $conteudo .= '<div>'.$gn_mininum_gn_charge_price.'</div>';
+        if (($card_option && $order_total_card < 500) && ($billet_option && $order_total_billet < 500)) {
+            $conteudo .= '<div>' . $gn_mininum_gn_charge_price . '</div>';
         }
         $conteudo .= '</div>';
 
         $conteudo .= '<div style="margin: 0px;">';
-        if ($billet_option=="1") {
+        if ($billet_option == "1") {
             $conteudo .= '<div id="gn-billet-payment-option" class="gn-osc-payment-option gn-osc-payment-option-selected">
                 <div>
                     <div id="billet-radio-button" class="gn-osc-left">
@@ -296,16 +299,16 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     </div>
                     <div class="gn-osc-left gn-osc-payment-option-gerencianet">
                         <strong>Boleto Bancário</strong>';
-                        if ($discount>0) {
-                            $conteudo .= '<span style="font-size: 14px; line-height: 15px;"><br>+'.$billet_discount_formatted.'% de desconto</span>';
-                        }
-                    $conteudo .= '</div>
+            if ($discount > 0) {
+                $conteudo .= '<span style="font-size: 14px; line-height: 15px;"><br>+' . $billet_discount_formatted . '% de desconto</span>';
+            }
+            $conteudo .= '</div>
                     <div class="gn-osc-left gn-osc-payment-option-sizer"></div>
                     <div class="clear"></div>
                 </div>
             </div>';
         }
-        if ($card_option=="1") {
+        if ($card_option == "1") {
             $conteudo .= '
             <div id="gn-card-payment-option" class="gn-osc-payment-option gn-osc-payment-option-unselected">
                 <div>
@@ -317,7 +320,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     </div>
                     <div class="gn-osc-left gn-osc-payment-option-gerencianet">
                         <strong>Cartão de Crédito</strong>
-                        <span style="font-size: 14px; line-height: 15px;"><br>em até '.$max_installments.'</span>
+                        <span style="font-size: 14px; line-height: 15px;"><br>em até ' . $max_installments . '</span>
                     </div>
                     <div class="gn-osc-left gn-osc-payment-option-sizer"></div>
                     <div class="clear"></div>
@@ -327,24 +330,24 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         $conteudo .= '
             <div class="clear"></div>
         </div>';
-        if ($billet_option=="1") {
-        $conteudo .= '<div id="collapse-payment-billet" class="gn-osc-background" >
+        if ($billet_option == "1") {
+            $conteudo .= '<div id="collapse-payment-billet" class="gn-osc-background" >
           <div class="panel-body">
               <div class="gn-osc-row gn-osc-pay-comments">
-                  <p class="gn-left-space-2"><strong>'.$gn_billet_payment_method_comments.'</strong></p>
+                  <p class="gn-left-space-2"><strong>' . $gn_billet_payment_method_comments . '</strong></p>
               </div>
               <div class="gn-form">
                 <div id="billet-data">
                     <div style="background-color: #F3F3F3; border: 1px solid #F3F3F3; margin-top: 10px; margin-bottom: 10px;">
                   <div class="gn-osc-row">
                     <div class="gn-col-12 gn-cnpj-row">
-                    <input type="checkbox" name="pay_billet_with_cnpj" id="pay_billet_with_cnpj" value="1" />'.$gn_cnpj_option.'
+                    <input type="checkbox" name="pay_billet_with_cnpj" id="pay_billet_with_cnpj" value="1" />' . $gn_cnpj_option . '
                     </div>
                   </div>
 
                   <div id="pay_cnpj" class="required gn-osc-row">
                     <div class="gn-col-2 gn-label">
-                      <label for="gn_billet_cnpj" class="gn-right-padding-1">'.$gn_cnpj.'</label>
+                      <label for="gn_billet_cnpj" class="gn-right-padding-1">' . $gn_cnpj . '</label>
                     </div>
                     <div class="gn-col-10">
                       
@@ -355,7 +358,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                         <div class="gn-col-8">
                           <div class="required">
                             <div class="gn-col-4 gn-label">
-                              <label class=" gn-col-12 gn-right-padding-1" for="gn_billet_corporate_name">'.$gn_corporate_name.'</label>
+                              <label class=" gn-col-12 gn-right-padding-1" for="gn_billet_corporate_name">' . $gn_corporate_name . '</label>
                             </div>
                             <div class="gn-col-8">
                               <input type="text" name="gn_billet_corporate_name" id="gn_billet_corporate_name" class="form-control" value="" />
@@ -369,26 +372,26 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
                   <div id="gn_name_row" class="required gn-osc-row gn-billet-field" >
                     <div class="gn-col-2 gn-label">
-                      <label for="gn_billet_full_name" class="gn-right-padding-1">'.$gn_name.'</label>
+                      <label for="gn_billet_full_name" class="gn-right-padding-1">' . $gn_name . '</label>
                     </div>
                     <div class="gn-col-10">
-                      <input type="text" name="gn_billet_full_name" id="gn_billet_full_name" value="'.$customer_name.'" class="form-control" />
+                      <input type="text" name="gn_billet_full_name" id="gn_billet_full_name" value="' . $customer_name . '" class="form-control" />
                     </div>
                   </div>
 
 
                   <div id="gn_email_row" class=" required gn-osc-row gn-billet-field" >
                     <div class="gn-col-2 gn-label">
-                      <label class="gn-col-12 gn-right-padding-1" for="gn_billet_email">'.$gn_email.'</label>
+                      <label class="gn-col-12 gn-right-padding-1" for="gn_billet_email">' . $gn_email . '</label>
                     </div>
                     <div class="gn-col-10">
-                      <input type="text" name="gn_billet_email" value="'.$order_email.'" id="gn_billet_email" class="form-control" />
+                      <input type="text" name="gn_billet_email" value="' . $order_email . '" id="gn_billet_email" class="form-control" />
                     </div>
                   </div>
 
                   <div id="gn_cpf_phone_row" class="required gn-osc-row gn-billet-field" >
                     <div class="gn-col-2 gn-label">
-                      <label for="gn_billet_cpf" class="gn-right-padding-1">'.$gn_cpf.'</label>
+                      <label for="gn_billet_cpf" class="gn-right-padding-1">' . $gn_cpf . '</label>
                     </div>
                     <div class="gn-col-10">
                       
@@ -399,10 +402,10 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                         <div class="gn-col-8">
                           <div class=" required">
                             <div class="gn-col-4 gn-label">
-                            <label class="gn-col-12 gn-right-padding-1" for="gn_billet_phone_number" >'.$gn_phone.'</label>
+                            <label class="gn-col-12 gn-right-padding-1" for="gn_billet_phone_number" >' . $gn_phone . '</label>
                             </div>
                             <div class="gn-col-4">
-                              <input type="text" name="gn_billet_phone_number" id="gn_billet_phone_number" value="'.$customer_phone.'" class="form-control phone-mask" />
+                              <input type="text" name="gn_billet_phone_number" id="gn_billet_phone_number" value="' . $customer_phone . '" class="form-control phone-mask" />
                             </div>
                           </div>
                         </div>
@@ -416,22 +419,22 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
             </div>
 
             <div class="gn-osc-row" style="padding: 20px;">';
-                if ($discount>0) {
+            if ($discount > 0) {
                 $conteudo .= '<div class="gn-osc-row" style="border: 1px solid #DEDEDE; border-bottom: 0px; margin: 0px; padding:5px;">
                     <div style="float: left;">
-                        <strong>DESCONTO DE '.$discount_formatted.'% NO BOLETO:</strong>
+                        <strong>DESCONTO DE ' . $discount_formatted . '% NO BOLETO:</strong>
                     </div>
                     <div style="float: right;">
-                        <strong>-'.$order_billet_discount.'</strong>
+                        <strong>-' . $order_billet_discount . '</strong>
                     </div>
                 </div>';
-                }
-                $conteudo .= '<div class="gn-osc-row" style="border: 1px solid #DEDEDE; margin: 0px; padding:5px;">
+            }
+            $conteudo .= '<div class="gn-osc-row" style="border: 1px solid #DEDEDE; margin: 0px; padding:5px;">
                     <div style="float: left;">
                         <strong>TOTAL:</strong>
                     </div>
                     <div style="float: right;">
-                        <strong>'.$order_total_with_billet_discount.'</strong>
+                        <strong>' . $order_total_with_billet_discount . '</strong>
                     </div>
                 </div>
             </div>
@@ -454,15 +457,15 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
           </div>';
         }
 
-        if ($card_option=="1") {
+        if ($card_option == "1") {
             $conteudo .= '<div id="collapse-payment-card" class="panel-collapse';
-            if ($billet_option=="1") {
+            if ($billet_option == "1") {
                 $conteudo .= 'gn-hide';
             }
             $conteudo .= ' gn-osc-background" >
             <div class="panel-body">
             <div class="gn-osc-row gn-osc-pay-comments">
-               <p class="gn-left-space-2"><strong>'.$gn_card_payment_comments.'</strong></p>
+               <p class="gn-left-space-2"><strong>' . $gn_card_payment_comments . '</strong></p>
             </div>
 
             <div class="gn-form">
@@ -470,13 +473,13 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     <div style="background-color: #F3F3F3; border: 1px solid #F3F3F3; margin-top: 10px; margin-bottom: 10px;">
                     <div class="gn-osc-row">
                       <div class="gn-col-12 gn-cnpj-row">
-                        <input type="checkbox" name="pay_card_with_cnpj" id="pay_card_with_cnpj" value="1" /> '.$gn_cnpj_option.'
+                        <input type="checkbox" name="pay_card_with_cnpj" id="pay_card_with_cnpj" value="1" /> ' . $gn_cnpj_option . '
                       </div>
                     </div>
 
                     <div id="pay_cnpj_card" class=" required gn-osc-row" >
                       <div class="gn-col-2 gn-label">
-                      <label class="gn-right-padding-1" for="gn_card_cnpj">'.$gn_cnpj.'</label>
+                      <label class="gn-right-padding-1" for="gn_card_cnpj">' . $gn_cnpj . '</label>
                       </div>
                       <div class="gn-col-10">
                         
@@ -487,7 +490,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                           <div class="gn-col-8">
                             <div class=" required gn-left-space-2">
                               <div class="gn-col-4 gn-label">
-                                <label class="gn-col-12 gn-right-padding-1" for="gn_card_corporate_name">'.$gn_corporate_name.'</label>
+                                <label class="gn-col-12 gn-right-padding-1" for="gn_card_corporate_name">' . $gn_corporate_name . '</label>
                               </div>
                               <div class="gn-col-8">
                                 <input type="text" name="gn_card_corporate_name" id="gn_card_corporate_name" class="form-control" value="" />
@@ -501,27 +504,27 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
                     <div id="gn_card_name_row" class="required gn-osc-row gn-card-field" >
                       <div class="gn-col-2 gn-label">
-                        <label class="gn-col-12 gn-right-padding-1" for="gn_card_full_name">'.$gn_name.'</label>
+                        <label class="gn-col-12 gn-right-padding-1" for="gn_card_full_name">' . $gn_name . '</label>
                       </div>
                       <div class="gn-col-10">
-                        <input type="text" name="gn_card_full_name" id="gn_card_full_name" value="'.$customer_name.'" class="form-control" />
+                        <input type="text" name="gn_card_full_name" id="gn_card_full_name" value="' . $customer_name . '" class="form-control" />
                       </div>
                     </div>
 
                     <div id="gn_card_cpf_phone_row" class="required gn-osc-row gn-card-field" >
                     
                         <div class="gn-col-2 gn-label">
-                            <label for="gn_card_cpf" class="gn-right-padding-1" >'.$gn_cpf.'</label>
+                            <label for="gn_card_cpf" class="gn-right-padding-1" >' . $gn_cpf . '</label>
                         </div>
                         <div class="gn-col-4">
                             <input type="text" name="gn_card_cpf" id="gn_card_cpf" value="" class="form-control cpf-mask gn-minimum-size-field" />
                         </div>
                         <div class="gn-col-6">
                           <div class="gn-col-4 gn-label">
-                              <label class="gn-left-space-2 gn-right-padding-1" for="gn_card_phone_number">'.$gn_phone.'</label>
+                              <label class="gn-left-space-2 gn-right-padding-1" for="gn_card_phone_number">' . $gn_phone . '</label>
                           </div>
                           <div class="gn-col-8">
-                              <input type="text" name="gn_card_phone_number" value="'.$customer_phone.'" id="gn_card_phone_number" class="form-control phone-mask gn-minimum-size-field" />
+                              <input type="text" name="gn_card_phone_number" value="' . $customer_phone . '" id="gn_card_phone_number" class="form-control phone-mask gn-minimum-size-field" />
                           </div>
                           
                         </div>
@@ -529,19 +532,19 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
                     <div id="gn_card_birth_row" class=" required gn-osc-row gn-card-field" >
                       <div class="gn-col-3 gn-label-birth">
-                          <label class="gn-right-padding-1" for="gn_card_birth">'.$gn_birth.'</label>
+                          <label class="gn-right-padding-1" for="gn_card_birth">' . $gn_birth . '</label>
                       </div>
                       <div class="gn-col-3">
-                          <input type="text" name="gn_card_birth" id="gn_card_birth" value="'.$customer_data_nascimento.'" class="form-control birth-mask" />
+                          <input type="text" name="gn_card_birth" id="gn_card_birth" value="' . $customer_data_nascimento . '" class="form-control birth-mask" />
                       </div>
                     </div>
 
                     <div id="gn_card_email_row" class=" required gn-card-field" >
                       <div class="gn-col-2">
-                        <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_email">'.$gn_email.'</label>
+                        <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_email">' . $gn_email . '</label>
                       </div>
                       <div class="gn-col-10">
-                        <input type="text" name="gn_card_email" value="'.$order_email.'" id="gn_card_email" class="form-control" />
+                        <input type="text" name="gn_card_email" value="' . $order_email . '" id="gn_card_email" class="form-control" />
                       </div>
                     </div>
                     <div class="clear"></div>
@@ -549,26 +552,26 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     <div id="billing-adress" class="gn-section">
                         <div class="gn-osc-row gn-card-field">
                             <p>
-                            <strong>'.$gn_billing_address_title.'</strong>
+                            <strong>' . $gn_billing_address_title . '</strong>
                             </p>
                         </div>
 
                         <div id="gn_card_street_number_row" class="required gn-osc-row gn-card-field" >
                             <div class="gn-col-2">
-                                <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_street">'.$gn_street.'</label>
+                                <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_street">' . $gn_street . '</label>
                             </div>
                             
                             <div class="gn-col-10">
                                 <div class="gn-col-6 required">
-                                    <input type="text" name="gn_card_street" id="gn_card_street" value="'.$customer_address.'" class="form-control" />
+                                    <input type="text" name="gn_card_street" id="gn_card_street" value="' . $customer_address . '" class="form-control" />
                                 </div>
                                 <div class="gn-col-6">
                                     <div class=" required gn-left-space-2">
                                         <div class="gn-col-5">
-                                            <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_street_number">'.$gn_street_number.'</label>
+                                            <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_street_number">' . $gn_street_number . '</label>
                                         </div>
                                         <div class="gn-col-7">
-                                            <input type="text" name="gn_card_street_number" id="gn_card_street_number" value="'.$customer_address_number.'" class="form-control" />
+                                            <input type="text" name="gn_card_street_number" id="gn_card_street_number" value="' . $customer_address_number . '" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
@@ -576,20 +579,20 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                         </div>
                         <div id="gn_card_neighborhood_row" class="gn-osc-row gn-card-field">
                             <div class="gn-col-2 required">
-                                <label class="gn-col-12 gn-label required gn-right-padding-1" for="gn_card_neighborhood">'.$gn_neighborhood.'</label>
+                                <label class="gn-col-12 gn-label required gn-right-padding-1" for="gn_card_neighborhood">' . $gn_neighborhood . '</label>
                             </div>
                     
                             <div class="gn-col-3">
                                 
-                                <input type="text" name="gn_card_neighborhood" id="gn_card_neighborhood" value="'.$customer_bairro.'" class="form-control" />
+                                <input type="text" name="gn_card_neighborhood" id="gn_card_neighborhood" value="' . $customer_bairro . '" class="form-control" />
                             </div>
                             <div class="gn-col-7">
                                 <div class=" gn-left-space-2">
                                   <div class="gn-col-5">
-                                  <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_complement">'.$gn_address_complement.'</label>
+                                  <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_complement">' . $gn_address_complement . '</label>
                                   </div>
                                   <div class="gn-col-7">
-                                    <input type="text" name="gn_card_complement" id="gn_card_complement" value="'.$customer_address_complemento.'" class="form-control" maxlength="54" />
+                                    <input type="text" name="gn_card_complement" id="gn_card_complement" value="' . $customer_address_complemento . '" class="form-control" maxlength="54" />
                                   </div>
                                 </div>
                             </div>
@@ -597,19 +600,19 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
                         <div id="gn_card_city_zipcode_row" class="required billing-address-data gn-card-field gn-osc-row" >
                             <div class="gn-col-2">
-                                <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_zipcode">'.$gn_cep.'</label>
+                                <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_zipcode">' . $gn_cep . '</label>
                             </div>
                             <div class="gn-col-10">
                                 <div class="gn-col-4 required">
-                                    <input type="text" name="gn_card_zipcode" id="gn_card_zipcode" value="'.$customer_zip.'" class="form-control" />
+                                    <input type="text" name="gn_card_zipcode" id="gn_card_zipcode" value="' . $customer_zip . '" class="form-control" />
                                 </div>
                                 <div class="gn-col-8">
                                     <div class=" required gn-left-space-2">
                                       <div class="gn-col-4">
-                                          <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_city">'.$gn_city.'</label>
+                                          <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_city">' . $gn_city . '</label>
                                       </div>
                                       <div class="gn-col-6">
-                                        <input type="text" name="gn_card_city" id="gn_card_city" value="'.$customer_city.'" class="form-control" />
+                                        <input type="text" name="gn_card_city" id="gn_card_city" value="' . $customer_city . '" class="form-control" />
                                       </div>
                                     </div>
                                 </div>
@@ -618,38 +621,146 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
                         <div id="gn_card_state_row" class="required billing-address-data gn-card-field gn-osc-row" >
                           <div class="gn-col-2">
-                            <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_state">'.$gn_state.'</label>
+                            <label class="gn-col-12 gn-label gn-right-padding-1" for="gn_card_state">' . $gn_state . '</label>
                           </div>
                           <div class="gn-col-10">
                             <select name="gn_card_state" id="gn_card_state" class="form-control gn-form-select">
                               <option value=""></option> 
-                              <option value="AC" '; if ($customer_state=="AC") { $conteudo .= 'selected'; } $conteudo .= '>Acre</option> 
-                              <option value="AL" '; if ($customer_state=="AL") { $conteudo .= 'selected'; } $conteudo .= '>Alagoas</option> 
-                              <option value="AP" '; if ($customer_state=="AP") { $conteudo .= 'selected'; } $conteudo .= '>Amapá</option> 
-                              <option value="AM" '; if ($customer_state=="AM") { $conteudo .= 'selected'; } $conteudo .= '>Amazonas</option> 
-                              <option value="BA" '; if ($customer_state=="BA") { $conteudo .= 'selected'; } $conteudo .= '>Bahia</option> 
-                              <option value="CE" '; if ($customer_state=="CE") { $conteudo .= 'selected'; } $conteudo .= '>Ceará</option> 
-                              <option value="DF" '; if ($customer_state=="DF") { $conteudo .= 'selected'; } $conteudo .= '>Distrito Federal</option> 
-                              <option value="ES" '; if ($customer_state=="ES") { $conteudo .= 'selected'; } $conteudo .= '>Espírito Santo</option> 
-                              <option value="GO" '; if ($customer_state=="GO") { $conteudo .= 'selected'; } $conteudo .= '>Goiás</option> 
-                              <option value="MA" '; if ($customer_state=="MA") { $conteudo .= 'selected'; } $conteudo .= '>Maranhão</option> 
-                              <option value="MT" '; if ($customer_state=="MT") { $conteudo .= 'selected'; } $conteudo .= '>Mato Grosso</option> 
-                              <option value="MS" '; if ($customer_state=="MS") { $conteudo .= 'selected'; } $conteudo .= '>Mato Grosso do Sul</option> 
-                              <option value="MG" '; if ($customer_state=="MG") { $conteudo .= 'selected'; } $conteudo .= '>Minas Gerais</option> 
-                              <option value="PA" '; if ($customer_state=="PA") { $conteudo .= 'selected'; } $conteudo .= '>Pará</option> 
-                              <option value="PB" '; if ($customer_state=="PB") { $conteudo .= 'selected'; } $conteudo .= '>Paraíba</option> 
-                              <option value="PR" '; if ($customer_state=="PR") { $conteudo .= 'selected'; } $conteudo .= '>Paraná</option> 
-                              <option value="PE" '; if ($customer_state=="PE") { $conteudo .= 'selected'; } $conteudo .= '>Pernambuco</option> 
-                              <option value="PI" '; if ($customer_state=="PI") { $conteudo .= 'selected'; } $conteudo .= '>Piauí</option> 
-                              <option value="RJ" '; if ($customer_state=="RJ") { $conteudo .= 'selected'; } $conteudo .= '>Rio de Janeiro</option> 
-                              <option value="RN" '; if ($customer_state=="RN") { $conteudo .= 'selected'; } $conteudo .= '>Rio Grande do Norte</option> 
-                              <option value="RS" '; if ($customer_state=="RS") { $conteudo .= 'selected'; } $conteudo .= '>Rio Grande do Sul</option> 
-                              <option value="RO" '; if ($customer_state=="RO") { $conteudo .= 'selected'; } $conteudo .= '>Rondônia</option> 
-                              <option value="RR" '; if ($customer_state=="RR") { $conteudo .= 'selected'; } $conteudo .= '>Roraima</option> 
-                              <option value="SC" '; if ($customer_state=="SC") { $conteudo .= 'selected'; } $conteudo .= '>Santa Catarina</option> 
-                              <option value="SP" '; if ($customer_state=="SP") { $conteudo .= 'selected'; } $conteudo .= '>São Paulo</option> 
-                              <option value="SE" '; if ($customer_state=="SE") { $conteudo .= 'selected'; } $conteudo .= '>Sergipe</option> 
-                              <option value="TO" '; if ($customer_state=="TO") { $conteudo .= 'selected'; } $conteudo .= '>Tocantins</option> 
+                              <option value="AC" ';
+            if ($customer_state == "AC") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Acre</option> 
+                              <option value="AL" ';
+            if ($customer_state == "AL") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Alagoas</option> 
+                              <option value="AP" ';
+            if ($customer_state == "AP") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Amapá</option> 
+                              <option value="AM" ';
+            if ($customer_state == "AM") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Amazonas</option> 
+                              <option value="BA" ';
+            if ($customer_state == "BA") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Bahia</option> 
+                              <option value="CE" ';
+            if ($customer_state == "CE") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Ceará</option> 
+                              <option value="DF" ';
+            if ($customer_state == "DF") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Distrito Federal</option> 
+                              <option value="ES" ';
+            if ($customer_state == "ES") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Espírito Santo</option> 
+                              <option value="GO" ';
+            if ($customer_state == "GO") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Goiás</option> 
+                              <option value="MA" ';
+            if ($customer_state == "MA") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Maranhão</option> 
+                              <option value="MT" ';
+            if ($customer_state == "MT") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Mato Grosso</option> 
+                              <option value="MS" ';
+            if ($customer_state == "MS") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Mato Grosso do Sul</option> 
+                              <option value="MG" ';
+            if ($customer_state == "MG") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Minas Gerais</option> 
+                              <option value="PA" ';
+            if ($customer_state == "PA") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Pará</option> 
+                              <option value="PB" ';
+            if ($customer_state == "PB") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Paraíba</option> 
+                              <option value="PR" ';
+            if ($customer_state == "PR") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Paraná</option> 
+                              <option value="PE" ';
+            if ($customer_state == "PE") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Pernambuco</option> 
+                              <option value="PI" ';
+            if ($customer_state == "PI") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Piauí</option> 
+                              <option value="RJ" ';
+            if ($customer_state == "RJ") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Rio de Janeiro</option> 
+                              <option value="RN" ';
+            if ($customer_state == "RN") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Rio Grande do Norte</option> 
+                              <option value="RS" ';
+            if ($customer_state == "RS") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Rio Grande do Sul</option> 
+                              <option value="RO" ';
+            if ($customer_state == "RO") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Rondônia</option> 
+                              <option value="RR" ';
+            if ($customer_state == "RR") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Roraima</option> 
+                              <option value="SC" ';
+            if ($customer_state == "SC") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Santa Catarina</option> 
+                              <option value="SP" ';
+            if ($customer_state == "SP") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>São Paulo</option> 
+                              <option value="SE" ';
+            if ($customer_state == "SE") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Sergipe</option> 
+                              <option value="TO" ';
+            if ($customer_state == "TO") {
+                $conteudo .= 'selected';
+            }
+            $conteudo .= '>Tocantins</option> 
                             </select>
                           </div>
                         </div>
@@ -659,7 +770,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     <div class="gn-section" style="background-color: #F0F0F0; padding: 5px 10px;">
                         <div class="required gn-osc-row">
                             <div>
-                            <label class="" for="gn_card_brand">'.$gn_card_brand.'</label>
+                            <label class="" for="gn_card_brand">' . $gn_card_brand . '</label>
                             </div>
                             <div>
                                 <div class="gn-card-brand-selector">
@@ -696,7 +807,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                         <div class="gn-osc-row required">
                                 <div class="gn-col-6">
                                     <div>
-                                        '.$gn_card_number.'
+                                        ' . $gn_card_number . '
                                     </div>
                                     <div>
                                         <div class="gn-card-number-input-row" style="margin-right: 20px;">
@@ -708,7 +819,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                                 
                                 <div class="gn-col-6">
                                     <div>
-                                        '.$gn_card_cvv.'
+                                        ' . $gn_card_cvv . '
                                     </div>
                                     <div>
                                         <div class="pull-left gn-cvv-row">
@@ -719,7 +830,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                                                 <div class="pull-left gn-icon-card-input">
                                                 </div>
                                                 <div class="pull-left">
-                                                    '.$gn_card_cvv_tip.'
+                                                    ' . $gn_card_cvv_tip . '
                                                 </div>
                                                 <div class="clear"></div>
                                             </div>
@@ -734,7 +845,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                         <div class="gn-osc-row">
                             <div class="gn-col-12">
                                     <div>   
-                                        '.$gn_card_expiration.'
+                                        ' . $gn_card_expiration . '
                                     </div>
                                     <div class="gn-card-expiration-row">
                                         <select class="form-control gn-card-expiration-select" name="gn_card_expiration_month" id="gn_card_expiration_month" >
@@ -757,14 +868,14 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                                         </div>
                                         <select class="form-control gn-card-expiration-select" name="gn_card_expiration_year" id="gn_card_expiration_year" >
                                             <option value=""> AAAA </option>';
-                                            
-                                            $actual_year = intval(date("Y")); 
-                                            $last_year = $actual_year + 15;
-                                            for ($i = $actual_year; $i <= $last_year; $i++) {
-                                                $conteudo .= '<option value="'.$i.'"> '.$i.' </option>';
-                                            }
-                                            
-                                        $conteudo .= '</select>
+
+            $actual_year = intval(date("Y"));
+            $last_year = $actual_year + 15;
+            for ($i = $actual_year; $i <= $last_year; $i++) {
+                $conteudo .= '<option value="' . $i . '"> ' . $i . ' </option>';
+            }
+
+            $conteudo .= '</select>
                                         <div class="clear"></div>
                                     </div>
                                 </div>
@@ -773,11 +884,11 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
                         <div class="gn-osc-row required">
                             <div class="gn-col-12">
-                                <label class="" for="gn_card_installments">'.$gn_card_installments_options.'</label>
+                                <label class="" for="gn_card_installments">' . $gn_card_installments_options . '</label>
                             </div>
                             <div class="gn-col-12">
                                 <select name="gn_card_installments" id="gn_card_installments" class="form-control gn-form-select">
-                                    <option value="">'.$gn_card_brand_select.'</option> 
+                                    <option value="">' . $gn_card_brand_select . '</option> 
                                 </select>
                             </div>
                             <div class="clear"></div>
@@ -792,7 +903,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     <strong>TOTAL:</strong>
                 </div>
                 <div style="float: right;">
-                    <strong>'.GerencianetIntegration::formatCurrencyBRL($order_total).'</strong>
+                    <strong>' . GerencianetIntegration::formatCurrencyBRL($order_total) . '</strong>
                 </div>
             </div>
         </div>
@@ -814,7 +925,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         </div>
 
       </div>';
-      }
+        }
 
         $conteudo .= "</div>";
 
@@ -855,7 +966,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
                         <div class="gn-success-payment-billet-comments gn-card-pay-info" style="float:left; width:70%;">
 
-                                A cobrança em seu cartão está sendo processada. Assim que houver a confirmação, enviaremos um e-mail para o endereço <b>'.$order_email.'</b>, informado em seu cadastro. Caso não receba o produto ou serviço adquirido, você tem o prazo de <b>14 dias a partir da data de confirmação do pagamento</b> para abrir uma contestação.<br>Informe-se em  <a href="http://www.gerencianet.com.br/contestacao" target="_blank">www.gerencianet.com.br/contestacao</a>.
+                                A cobrança em seu cartão está sendo processada. Assim que houver a confirmação, enviaremos um e-mail para o endereço <b>' . $order_email . '</b>, informado em seu cadastro. Caso não receba o produto ou serviço adquirido, você tem o prazo de <b>14 dias a partir da data de confirmação do pagamento</b> para abrir uma contestação.<br>Informe-se em  <a href="http://www.gerencianet.com.br/contestacao" target="_blank">www.gerencianet.com.br/contestacao</a>.
                         
                             <p>Número da Cobrança: <b><span class="charge_id_success" style="width: 100px;"></span></b>
                             </p>
@@ -879,12 +990,13 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         return $conteudo;
     }
 
-    public function updateOrderStatusGN($virtuemart_order_id, $order_id) {
+    public function updateOrderStatusGN($virtuemart_order_id, $order_id)
+    {
 
         $db = JFactory::getDBO();
         $query = 'SELECT payment_name, payment_order_total, payment_currency, virtuemart_paymentmethod_id
         FROM `' . $this->_tablename . '`
-        WHERE order_number = "'.$order_id.'"';
+        WHERE order_number = "' . $order_id . '"';
         $db->setQuery($query);
         $pagamento = $db->loadObjectList();
 
@@ -909,14 +1021,15 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
      * Display stored payment data for an order
      *
      */
-    function plgVmOnShowOrderBEPayment($virtuemart_order_id, $virtuemart_payment_id) {
+    function plgVmOnShowOrderBEPayment($virtuemart_order_id, $virtuemart_payment_id)
+    {
         if (!$this->selectedThisByMethodId($virtuemart_payment_id)) {
             return null; // Another method was selected, do nothing
         }
 
         $db = JFactory::getDBO();
         $q = 'SELECT * FROM `' . $this->_tablename . '` '
-        . 'WHERE `virtuemart_order_id` = ' . $virtuemart_order_id;
+            . 'WHERE `virtuemart_order_id` = ' . $virtuemart_order_id;
         $db->setQuery($q);
         if (!($paymentTable = $db->loadObject())) {
             vmWarn(500, $q . " " . $db->getErrorMsg());
@@ -925,20 +1038,21 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
 
         $html = '<table class="adminlist">' . "\n";
-        $html .=$this->getHtmlHeaderBE();
+        $html .= $this->getHtmlHeaderBE();
 
         $html .= $this->getHtmlRowBE('GERENCIANET_PAYMENT_NAME', 'Gerencianet');
         $html .= $this->getHtmlRowBE('GERENCIANET_PAYMENT_DATE', $paymentTable->modified_on);
         $html .= $this->getHtmlRowBE('GERENCIANET_CODIGO_GERENCIANET', $paymentTable->gerencianet_charge_id);
         $html .= $this->getHtmlRowBE('GERENCIANET_STATUS', $paymentTable->gerencianet_status);
-        $html .= $this->getHtmlRowBE('GERENCIANET_DISCOUNT', GerencianetIntegration::formatCurrencyBRL(intval($paymentTable->billet_discount*100)));
-        $html .= $this->getHtmlRowBE('GERENCIANET_TOTAL_CURRENCY', GerencianetIntegration::formatCurrencyBRL(intval($paymentTable->payment_order_total*100)));
+        $html .= $this->getHtmlRowBE('GERENCIANET_DISCOUNT', GerencianetIntegration::formatCurrencyBRL(intval($paymentTable->billet_discount * 100)));
+        $html .= $this->getHtmlRowBE('GERENCIANET_TOTAL_CURRENCY', GerencianetIntegration::formatCurrencyBRL(intval($paymentTable->payment_order_total * 100)));
         $html .= $this->getHtmlRowBE('GERENCIANET_TYPE_TRANSACTION', $paymentTable->gerencianet_charge_type);
         $html .= '</table>' . "\n";
         return $html;
     }
 
-    function getCosts(VirtueMartCart $cart, $method, $cart_prices) {
+    function getCosts(VirtueMartCart $cart, $method, $cart_prices)
+    {
         if (preg_match('/%$/', $method->cost_percent_total)) {
             $cost_percent_total = substr($method->cost_percent_total, 0, -1);
         } else {
@@ -947,93 +1061,105 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
         return ($method->cost_per_transaction + ($cart_prices['salesPrice'] * $cost_percent_total * 0.01));
     }
 
-    function setCartPrices (VirtueMartCart $cart, &$cart_prices, $method) {
+    function setCartPrices(VirtueMartCart $cart, &$cart_prices, $method)
+    {
         return parent::setCartPrices($cart, $cart_prices, $method);
     }
 
-    protected function checkConditions($cart, $method, $cart_prices) {
-
+    protected function checkConditions($cart, $method, $cart_prices)
+    {
         return true;
     }
 
-    function plgVmOnStoreInstallPaymentPluginTable($jplugin_id) {
+    function plgVmOnStoreInstallPaymentPluginTable($jplugin_id)
+    {
         return $this->onStoreInstallPluginTable($jplugin_id);
     }
 
-    public function plgVmOnSelectCheckPayment(VirtueMartCart $cart) {
+    public function plgVmOnSelectCheckPayment(VirtueMartCart $cart)
+    {
         return $this->OnSelectCheck($cart);
     }
 
-    public function plgVmDisplayListFEPayment(VirtueMartCart $cart, $selected = 0, &$htmlIn) {
+    public function plgVmDisplayListFEPayment(VirtueMartCart $cart, $selected = 0, &$htmlIn)
+    {
         return $this->displayListFE($cart, $selected, $htmlIn);
     }
 
-    public function plgVmonSelectedCalculatePricePayment(VirtueMartCart $cart, array &$cart_prices, &$cart_prices_name) {
+    public function plgVmonSelectedCalculatePricePayment(VirtueMartCart $cart, array &$cart_prices, &$cart_prices_name)
+    {
         return $this->onSelectedCalculatePrice($cart, $cart_prices, $cart_prices_name);
     }
 
-    function plgVmOnCheckAutomaticSelectedPayment(VirtueMartCart $cart, array $cart_prices = array()) {
+    function plgVmOnCheckAutomaticSelectedPayment(VirtueMartCart $cart, array $cart_prices = array())
+    {
         return $this->onCheckAutomaticSelected($cart, $cart_prices);
     }
 
-    public function plgVmOnShowOrderFEPayment($virtuemart_order_id, $virtuemart_paymentmethod_id, &$payment_name) {
-      $mainframe = JFactory::getApplication();
-      if($mainframe->isAdmin()) {
-           return;
-       }
-
-       if (!($method = $this->getVmPluginMethod ($virtuemart_paymentmethod_id))) {
-          return NULL; // Another method was selected, do nothing
+    public function plgVmOnShowOrderFEPayment($virtuemart_order_id, $virtuemart_paymentmethod_id, &$payment_name)
+    {
+        $mainframe = JFactory::getApplication();
+        if ($mainframe->isAdmin()) {
+            return;
         }
-        if (!$this->selectedThisElement ($method->payment_element)) {
-          return FALSE;
+
+        if (!($method = $this->getVmPluginMethod($virtuemart_paymentmethod_id))) {
+            return NULL; // Another method was selected, do nothing
+        }
+        if (!$this->selectedThisElement($method->payment_element)) {
+            return FALSE;
         }
         $this->onShowOrderFE($virtuemart_order_id, $virtuemart_paymentmethod_id, $payment_name);
     }
 
-    function plgVmonShowOrderPrintPayment($order_number, $method_id) {
+    function plgVmonShowOrderPrintPayment($order_number, $method_id)
+    {
         return $this->onShowOrderPrint($order_number, $method_id);
     }
 
-    function plgVmDeclarePluginParamsPayment($name, $id, &$data) {
+    function plgVmDeclarePluginParamsPayment($name, $id, &$data)
+    {
         return $this->declarePluginParams('payment', $name, $id, $data);
     }
 
-    function plgVmSetOnTablePluginParamsPayment($name, $id, &$table) {
+    function plgVmSetOnTablePluginParamsPayment($name, $id, &$table)
+    {
         return $this->setOnTablePluginParams($name, $id, $table);
     }
 
-    function configGnIntegration($pm) {
+    function configGnIntegration($pm)
+    {
         $method = $this->getVmPluginMethod($pm);
 
-        if ($method->sandbox=="1") {
+        if ($method->sandbox == "1") {
             $sandbox = "yes";
         } else {
             $sandbox = "no";
         }
-        
-        return new GerencianetIntegration($method->client_id_production,$method->client_secret_production,$method->client_id_development,$method->client_secret_development,$sandbox,$method->payee_code);
+
+        return new GerencianetIntegration($method->client_id_production, $method->client_secret_production, $method->client_id_development, $method->client_secret_development, $sandbox, $method->payee_code);
     }
 
-    function gerencianetRequest($pm) {
+    function gerencianetRequest($pm)
+    {
         $method = $this->getVmPluginMethod($pm);
         $action = JRequest::getVar('action');
 
         switch ($action) {
 
             case 'get_installments':
-                
+
                 $gnIntegration = $this->configGnIntegration($pm);
 
                 $post_brand = JRequest::getVar('brand');
-                if ($post_brand=="") {
+                if ($post_brand == "") {
                     $post_brand = 'visa';
                 }
 
                 $totalOrder = JRequest::getVar('value');
                 $total = intval($totalOrder);
                 $brand = $post_brand;
-                $gnApiResult = $gnIntegration->get_installments($total,$brand);
+                $gnApiResult = $gnIntegration->get_installments($total, $brand);
 
                 $resultCheck = array();
                 $resultCheck = json_decode($gnApiResult, true);
@@ -1043,7 +1169,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
             case 'create_charge':
 
-                $gnIntegration = $this->configGnIntegration($pm);  
+                $gnIntegration = $this->configGnIntegration($pm);
 
                 $post_order_id = JRequest::getVar('order_id');
                 $cart = VirtueMartCart::getCart();
@@ -1052,7 +1178,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $virtuemart_order_id = VirtueMartModelOrders::getOrderIdByOrderNumber($post_order_id);
 
                 if (!class_exists('VirtueMartModelOrders'))
-                   require( JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php' );
+                    require(JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php');
 
                 $db = JFactory::getDBO();
                 $query = 'SELECT * FROM ' . '#__virtuemart_order_items' . " WHERE  `virtuemart_order_id`= '" . $virtuemart_order_id . "'";
@@ -1060,13 +1186,12 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $db->setQuery($query);
                 $exibe = $db->loadObjectList();
 
-                foreach ( $exibe as $result) {
-                    {
-                        $items [] = array (
+                foreach ($exibe as $result) { {
+                        $items[] = array(
                             'name' => $result->order_item_name,
-                            'value' => (int) ((Float)$result->product_final_price*100),
-                            'amount' => (int) $result->product_quantity
-                            );
+                            'value' => (int)((Float)$result->product_final_price * 100),
+                            'amount' => (int)$result->product_quantity
+                        );
                     }
                 }
 
@@ -1076,27 +1201,25 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $db->setQuery($query_shipping);
                 $exibe = $db->loadObjectList();
 
-                $shipping=null;
-                foreach ( $exibe as $result) {
-                    {
-                        $shipping_cost = (int)(((Float)$result->order_shipment)*100);
-                        if ($shipping_cost > 0)
-                        {
-                            $shipping = array (
-                                    array (
-                                        'name' => 'Custo de Envio',
-                                        'value' => (int) $shipping_cost
-                                    )
-                                );
+                $shipping = null;
+                foreach ($exibe as $result) { {
+                        $shipping_cost = (int)(((Float)$result->order_shipment) * 100);
+                        if ($shipping_cost > 0) {
+                            $shipping = array(
+                                array(
+                                    'name' => 'Custo de Envio',
+                                    'value' => (int)$shipping_cost
+                                )
+                            );
                         } else {
-                            $shipping=null;
+                            $shipping = null;
                         }
                     }
                 }
 
-                $notificationURL = JRoute::_(JURI::root() . 'index.php?option=com_virtuemart&view=pluginresponse&task=pluginnotification&tmpl=component&format=raw&pm='.$pm);
+                $notificationURL = JRoute::_(JURI::root() . 'index.php?option=com_virtuemart&view=pluginresponse&task=pluginnotification&tmpl=component&format=raw&pm=' . $pm);
 
-                $gnApiResult =  $gnIntegration->create_charge($post_order_id,$items,$shipping,$notificationURL);
+                $gnApiResult =  $gnIntegration->create_charge($post_order_id, $items, $shipping, $notificationURL);
 
                 $resultCheck = array();
                 $resultCheck = json_decode($gnApiResult, true);
@@ -1112,7 +1235,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 } else {
                     $billetExpireDays = "5";
                 }
-                $expirationDate = date("Y-m-d", mktime (0, 0, 0, date("m")  , date("d")+intval($billetExpireDays), date("Y")));
+                $expirationDate = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d") + intval($billetExpireDays), date("Y")));
 
                 $post_order_id = JRequest::getVar('order_id');
                 $post_pay_billet_with_cnpj = JRequest::getVar('pay_billet_with_cnpj');
@@ -1124,24 +1247,24 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $post_charge_id = JRequest::getVar('charge_id');
 
                 if (!class_exists('VirtueMartModelOrders'))
-                   require( JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php' );
+                    require(JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php');
 
                 $virtuemart_order_id = VirtueMartModelOrders::getOrderIdByOrderNumber($post_order_id);
 
-                if ($post_pay_billet_with_cnpj=="1") {
-                    $juridical_data = array (
-                      'corporate_name' => $post_corporate_name,
-                      'cnpj' => $post_cnpj
+                if ($post_pay_billet_with_cnpj == "1") {
+                    $juridical_data = array(
+                        'corporate_name' => $post_corporate_name,
+                        'cnpj' => $post_cnpj
                     );
 
-                    $customer = array (
+                    $customer = array(
                         'name' => $post_name,
                         'cpf' => $post_cpf,
                         'phone_number' => $post_phone_number,
                         'juridical_person' => $juridical_data
                     );
                 } else {
-                    $customer = array (
+                    $customer = array(
                         'name' => $post_name,
                         'cpf' => $post_cpf,
                         'phone_number' => $post_phone_number
@@ -1149,24 +1272,24 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 }
 
                 $db_total = JFactory::getDBO();
-                $query = 'SELECT order_salesPrice FROM `#__virtuemart_orders` WHERE virtuemart_order_id = "'.$virtuemart_order_id.'"';
+                $query = 'SELECT order_salesPrice FROM `#__virtuemart_orders` WHERE virtuemart_order_id = "' . $virtuemart_order_id . '"';
                 $db_total->setQuery($query);
                 $total_order = $db_total->loadObjectList();
 
-                $discount = floatval(preg_replace( '/[^0-9.]/', '', str_replace(",",".",$method->billet_discount)));
-                $discountTotalValue = intval(($total_order[0]->order_salesPrice)*($discount));
+                $discount = floatval(preg_replace('/[^0-9.]/', '', str_replace(",", ".", $method->billet_discount)));
+                $discountTotalValue = intval(($total_order[0]->order_salesPrice) * ($discount));
 
-                if ($discountTotalValue>0) {
-                    $discount = array (
+                if ($discountTotalValue > 0) {
+                    $discount = array(
                         'type' => 'currency',
                         'value' => $discountTotalValue
                     );
                 } else {
-                    $discount=null;
+                    $discount = null;
                 }
-                
-                $gnIntegration = $this->configGnIntegration($pm);  
-                $gnApiResult = $gnIntegration->pay_billet($post_charge_id,$expirationDate,$customer,$discount);
+
+                $gnIntegration = $this->configGnIntegration($pm);
+                $gnApiResult = $gnIntegration->pay_billet($post_charge_id, $expirationDate, $customer, $discount);
 
                 $resultCheck = array();
                 $resultCheck = json_decode($gnApiResult, true);
@@ -1174,7 +1297,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $db = JFactory::getDBO();
                 $query = 'SELECT payment_name, payment_order_total, payment_currency, virtuemart_paymentmethod_id
                 FROM `' . $this->_tablename . '`
-                WHERE order_number = "'.$post_order_id.'"';
+                WHERE order_number = "' . $post_order_id . '"';
                 $db->setQuery($query);
                 $pagamento = $db->loadObjectList();
                 $response_fields = array();
@@ -1183,11 +1306,11 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $response_fields['gerencianet_charge_type']      = JText::_('VMPAYMENT_GERENCIANET_BILLET');
                 $response_fields['gerencianet_status']        = JText::_('VMPAYMENT_GERENCIANET_STATUS_WAITING_PAYMENT');
                 $response_fields['order_number']      = $post_order_id;
-                $response_fields['billet_discount']      = ($discountTotalValue/100);
+                $response_fields['billet_discount']      = ($discountTotalValue / 100);
 
                 $response_fields['payment_name']              = $pagamento[0]->payment_name;
                 $response_fields['payment_currency']            = $pagamento[0]->payment_currency;
-                $response_fields['payment_order_total']           = $pagamento[0]->payment_order_total-($discountTotalValue/100);
+                $response_fields['payment_order_total']           = $pagamento[0]->payment_order_total - ($discountTotalValue / 100);
                 $response_fields['virtuemart_paymentmethod_id']   = $pagamento[0]->virtuemart_paymentmethod_id;
 
                 $this->storePSPluginInternalData($response_fields, 'virtuemart_order_id', true);
@@ -1208,7 +1331,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 if (JRequest::getVar('cnpj')) {
                     $post_cnpj = JRequest::getVar('cnpj');
                 }
-                
+
                 $post_name = JRequest::getVar('name');
                 $post_cpf = JRequest::getVar('cpf');
                 $post_phone_number = JRequest::getVar('phone_number');
@@ -1217,7 +1340,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $post_street = JRequest::getVar('street');
                 $post_number = JRequest::getVar('number');
                 $post_neighborhood = JRequest::getVar('neighborhood');
-                $post_zipcode = preg_replace( '/[^0-9]/', '', JRequest::getVar('zipcode'));
+                $post_zipcode = preg_replace('/[^0-9]/', '', JRequest::getVar('zipcode'));
                 $post_city = JRequest::getVar('city');
                 $post_state = JRequest::getVar('state');
                 $post_complement = JRequest::getVar('complement');
@@ -1225,13 +1348,13 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $post_installments = JRequest::getVar('installments');
                 $post_charge_id = JRequest::getVar('charge_id');
 
-                if ($post_pay_card_with_cnpj=="1") {
-                    $juridical_data = array (
-                      'corporate_name' => $post_corporate_name,
-                      'cnpj' => $post_cnpj
+                if ($post_pay_card_with_cnpj == "1") {
+                    $juridical_data = array(
+                        'corporate_name' => $post_corporate_name,
+                        'cnpj' => $post_cnpj
                     );
 
-                    $customer = array (
+                    $customer = array(
                         'name' => $post_name,
                         'cpf' => $post_cpf,
                         'phone_number' => $post_phone_number,
@@ -1240,7 +1363,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                         'birth' => $post_birth
                     );
                 } else {
-                    $customer = array (
+                    $customer = array(
                         'name' => $post_name,
                         'cpf' => $post_cpf,
                         'phone_number' => $post_phone_number,
@@ -1249,7 +1372,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     );
                 }
 
-                $billingAddress = array (
+                $billingAddress = array(
                     'street' => $post_street,
                     'number' => $post_number,
                     'neighborhood' => $post_neighborhood,
@@ -1259,19 +1382,19 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     'complement' => $post_complement
                 );
 
-                $discountTotalValue=0;
+                $discountTotalValue = 0;
 
-                if ($discountTotalValue>0) {
-                    $discount = array (
+                if ($discountTotalValue > 0) {
+                    $discount = array(
                         'type' => 'currency',
                         'value' => $discountTotalValue
                     );
                 } else {
-                    $discount=null;
+                    $discount = null;
                 }
 
                 $gnIntegration = $this->configGnIntegration($pm);
-                $gnApiResult = $gnIntegration->pay_card((int)$post_charge_id,$post_payment_token,(int)$post_installments,$billingAddress,$customer,$discount);
+                $gnApiResult = $gnIntegration->pay_card((int)$post_charge_id, $post_payment_token, (int)$post_installments, $billingAddress, $customer, $discount);
 
                 $resultCheck = array();
                 $resultCheck = json_decode($gnApiResult, true);
@@ -1279,7 +1402,7 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $db = JFactory::getDBO();
                 $query = 'SELECT payment_name, payment_order_total, payment_currency, virtuemart_paymentmethod_id
                 FROM `' . $this->_tablename . '`
-                WHERE order_number = "'.$post_order_id.'"';
+                WHERE order_number = "' . $post_order_id . '"';
                 $db->setQuery($query);
                 $pagamento = $db->loadObjectList();
                 $response_fields = array();
@@ -1288,11 +1411,11 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                 $response_fields['gerencianet_charge_type']      = JText::_('VMPAYMENT_GERENCIANET_CREDIT_CARD');
                 $response_fields['gerencianet_status']        = JText::_('VMPAYMENT_GERENCIANET_STATUS_WAITING_PAYMENT');
                 $response_fields['order_number']      = $post_order_id;
-                $response_fields['billet_discount']      = ($discountTotalValue/100);
+                $response_fields['billet_discount']      = ($discountTotalValue / 100);
 
                 $response_fields['payment_name']              = $pagamento[0]->payment_name;
                 $response_fields['payment_currency']            = $pagamento[0]->payment_currency;
-                $response_fields['payment_order_total']           = $pagamento[0]->payment_order_total-($discountTotalValue/100);
+                $response_fields['payment_order_total']           = $pagamento[0]->payment_order_total - ($discountTotalValue / 100);
                 $response_fields['virtuemart_paymentmethod_id']   = $pagamento[0]->virtuemart_paymentmethod_id;
 
                 $this->storePSPluginInternalData($response_fields, 'virtuemart_order_id', true);
@@ -1303,17 +1426,17 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
 
             default:
                 break;
-
         }
     }
 
-    function plgVmOnPaymentNotification() {
+    function plgVmOnPaymentNotification()
+    {
 
         $pm = JRequest::getVar('pm');
         $gn = JRequest::getVar('gn');
         $notification_token = JRequest::getVar('notification');
 
-        if ($gn=="ajax") {
+        if ($gn == "ajax") {
             $this->gerencianetRequest($pm);
             return null;
         }
@@ -1326,11 +1449,11 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
             if (!class_exists('shopFunctionsF'))
                 require(JPATH_VM_SITE . DS . 'helpers' . DS . 'shopfunctionsf.php');
             if (!class_exists('VirtueMartModelOrders'))
-                require( JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php' );
+                require(JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php');
 
-            $gnIntegration = $this->configGnIntegration($pm);  
+            $gnIntegration = $this->configGnIntegration($pm);
             $notification = json_decode($gnIntegration->notificationCheck($notification_token));
-            if ($notification->code==200) {
+            if ($notification->code == 200) {
 
 
                 foreach ($notification->data as $notification_data) {
@@ -1350,9 +1473,9 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     return false;
                 }
 
-                $new_status=null;
+                $new_status = null;
 
-                switch($orderStatusFromNotification) {
+                switch ($orderStatusFromNotification) {
                     case 'waiting':
                         $new_status = $method->status_cob_waiting;
                         $mensagem = JText::_('VMPAYMENT_GERENCIANET_CHARGE_STATUS_WAITING');
@@ -1362,23 +1485,23 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                         $mensagem = JText::_('VMPAYMENT_GERENCIANET_CHARGE_STATUS_PAID');
 
                         $db_check_billet_discount = JFactory::getDbo();
-                        $query = 'SELECT billet_discount FROM `' . $this->_tablename . '` WHERE virtuemart_order_id = "'.$virtuemart_order_id.'"';
+                        $query = 'SELECT billet_discount FROM `' . $this->_tablename . '` WHERE virtuemart_order_id = "' . $virtuemart_order_id . '"';
                         $db_check_billet_discount->setQuery($query);
                         $charge_data = $db_check_billet_discount->loadObjectList();
                         $total_billet_discount = $charge_data[0]->billet_discount;
 
-                        if ($total_billet_discount>0) {
+                        if ($total_billet_discount > 0) {
                             $db = JFactory::getDbo();
-                            $query = 'SELECT order_discount, order_total FROM `#__virtuemart_orders` WHERE virtuemart_order_id = "'.$virtuemart_order_id.'"';
+                            $query = 'SELECT order_discount, order_total FROM `#__virtuemart_orders` WHERE virtuemart_order_id = "' . $virtuemart_order_id . '"';
                             $db->setQuery($query);
                             $pagamento = $db->loadObjectList();
                             $descontoGn = -$total_billet_discount;
-                            $novoTotal = $pagamento[0]->order_total+$descontoGn;
-                            $totalDesconto = $pagamento[0]->order_discount+$descontoGn;
+                            $novoTotal = $pagamento[0]->order_total + $descontoGn;
+                            $totalDesconto = $pagamento[0]->order_discount + $descontoGn;
 
                             $db_update = JFactory::getDbo();
 
-                            $sql = "UPDATE `#__virtuemart_orders` SET `order_discount` = '".$totalDesconto."', `order_total` = '".$novoTotal."'  WHERE `virtuemart_order_id` = ".$virtuemart_order_id;
+                            $sql = "UPDATE `#__virtuemart_orders` SET `order_discount` = '" . $totalDesconto . "', `order_total` = '" . $novoTotal . "'  WHERE `virtuemart_order_id` = " . $virtuemart_order_id;
                             $db_update->setQuery($sql);
                             $db_update->query();
                         }
@@ -1400,16 +1523,16 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                         $mensagem = JText::_('VMPAYMENT_GERENCIANET_CHARGE_STATUS_CANCELED');
                         break;
                     default:
-                        $new_status=null;
+                        $new_status = null;
                         break;
                 }
 
-                if ($virtuemart_order_id && $new_status!=null) {
+                if ($virtuemart_order_id && $new_status != null) {
                     if (!class_exists('VirtueMartModelOrders'))
-                        require( JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php' );
+                        require(JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'orders.php');
 
                     $db = JFactory::getDBO();
-                    $query = 'SELECT * FROM `' . $this->_tablename . '` WHERE virtuemart_order_id = "'.$virtuemart_order_id.'"';
+                    $query = 'SELECT * FROM `' . $this->_tablename . '` WHERE virtuemart_order_id = "' . $virtuemart_order_id . '"';
                     $db->setQuery($query);
                     $pagamento = $db->loadObjectList();
 
@@ -1436,30 +1559,105 @@ class plgVmPaymentGerencianet extends vmPSPlugin {
                     $order['virtuemart_order_id']   = $virtuemart_order_id;
                     $order['comments']        = $mensagem;
                     $order['customer_notified']   = 1;
-                    
+
                     $modelOrder->updateStatusForOneOrder($virtuemart_order_id, $order, true);
 
                     return TRUE;
                 }
-
             }
-
         }
         return true;
-    }   
+    }
 
-    function plgVmOnPaymentResponseReceived(&$html='') {
+    function plgVmOnPaymentResponseReceived(&$html = '')
+    {
         $cart = VirtueMartCart::getCart();
         $cart->emptyCart();
         return true;
     }
 
-    public function plgVmOnUserPaymentCancel() {
+    public function plgVmOnUserPaymentCancel()
+    {
         return true;
     }
 
-    function plgVmDeclarePluginParamsPaymentVM3($data) {
+    function plgVmDeclarePluginParamsPaymentVM3($data)
+    {
+        $payment_params = explode("|", $data->payment_params, -1);
+        $payment_params_payee_code = explode(("="), $payment_params[5]);
+        $payment_params_payee_code_data = explode('"', $payment_params_payee_code[1]);
+        $payee_code = $payment_params_payee_code_data[1];
+        if ($_SERVER['PHP_SELF'] == '/virtuemart/administrator/index.php') {
+            $this->checkTLS($payee_code);
+        }
         return $this->declarePluginParams('payment', $data);
     }
+    public function checkTLS($payee_code)
+    {
+        $ch = curl_init();
+        $options = array(
+            CURLOPT_URL         => "https://tls.testegerencianet.com.br",
+            CURLOPT_RETURNTRANSFER         => true,
+            CURLOPT_FOLLOWLOCATION         => true,
+            CURLOPT_HEADER         => false,  // don't return headers
+            CURLOPT_MAXREDIRS      => 10,     // stop after 10 redirects
+            CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
+            CURLOPT_CONNECTTIMEOUT => 5,    // time-out on connect
+            CURLOPT_TIMEOUT        => 5,    // time-out on response
+        );
+        curl_setopt_array($ch, $options);
+        $content = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        if (($info['http_code'] !== 200) && ($content !== 'Gerencianet_Connection_TLS1.2_OK!')) {
+            $this->tls_ok = false;
+            JFactory::getApplication()->enqueueMessage('Identificamos que a sua hospedagem não suporta uma versão segura do TLS(Transport Layer Security) para se comunicar  
+                                        com a Gerencianet. Para conseguir gerar transações, será necessário que contate o administrador do seu servidor e solicite que 
+                                        a hospedagem seja atualizada para suportar co municações por meio do TLS na versão mínima 1.2. 
+                                        Em caso de dúvidas e para maiores informações, contat e  a Equi pe Técnica da Gerencia net at ravés do suporte da empresa.', 'error');
+        } else {
+            $this->tls_ok = true;
 
+            if (isset($_COOKIE["gnTestTlsLog"])) {
+                setcookie("gnTestTlsLog", false, time() - 1);
+            }
+        }
+        curl_close($ch);
+
+        if (!$this->tls_ok && !isset($_COOKIE["gnTestTlsLog"])) {
+            setcookie("gnTestTlsLog", true);
+            // register log
+            $account = $payee_code;
+            $ip = $_SERVER['SERVER_ADDR'];
+            $modulo = 'Joomla(VirtueMart)';
+            $control = md5($account . $ip . 'modulologs-tls');
+            $dataPost = array(
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+                'modulo' => $modulo,
+            );
+            $post = array(
+                'control' => $control,
+                'account' => $account,
+                'ip' => $ip,
+                'origin' => 'modulo',
+                'data' => json_encode($dataPost)
+            );
+            $ch1 = curl_init();
+            $options1 = array(
+                CURLOPT_URL         => "https://fortunus.gerencianet.com.br/logs/tls",
+                CURLOPT_RETURNTRANSFER         => true,
+                CURLOPT_FOLLOWLOCATION         => true,
+                CURLOPT_HEADER         => true,  // don't return headers
+                CURLOPT_MAXREDIRS      => 10,     // stop after 10 redirects
+                CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
+                CURLOPT_CONNECTTIMEOUT => 5,    // time-out on connect
+                CURLOPT_TIMEOUT        => 5,    // time-out on response
+                CURLOPT_POST        => true,
+                CURLOPT_POSTFIELDS        => json_encode($post),
+            );
+            curl_setopt_array($ch1, $options1);
+            $content1 = curl_exec($ch1);
+            $info1 = curl_getinfo($ch1);
+            curl_close($ch1);
+        }
+    }
 }

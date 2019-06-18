@@ -6,10 +6,10 @@
     <authorUrl>http://www.gerencianet.com.br</authorUrl>
     <copyright>Copyright (C) 2016. All rights reserved.</copyright>
     <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <description>Plugin de pagamento
         &lt;div style=&quot;background:#E5F5FF;border:1px solid #99D6FF;padding:10px;margin:10px; -box-shadow: inset 0px 0px 10px #fff, 0px 0px 5px #ccc; -webkit-box-shadow: inset 0px 0px 10px #fff, 0px 0px 5px #ccc; -moz-box-shadow: inset 0px 0px 10px #fff, 0px 0px 5px #ccc;font-weight:normal;&quot;&gt;
-        &lt;h1&gt;Plugin de pagamento Gerencianet para Virtuemart v0.2.1&lt;/h1&gt;
+        &lt;h1&gt;Plugin de pagamento Gerencianet para Virtuemart v0.2.2&lt;/h1&gt;
         &lt;div style=&quot;float:right;width: 20%&quot;&gt;
         &lt;img src=&quot;../plugins/vmpayment/gerencianet/logo_gerencianet.png&quot; /&gt;
         &lt;/div&gt;
@@ -85,28 +85,28 @@
                 </field>
 
                 <field type="vmspacer" default="Desenvolvimento" />
-                <field name="client_id_development" type="text" size="60"  label="Client ID Desenvolvimento" description="Informe a credencial Client ID de Desenvolvimento da sua aplicação na Gerencianet" default=""/>
-                <field name="client_secret_development" type="text" size="60"  label="Client Secret Desenvolvimento" description="Informe a credencial Client Secret de Desenvolvimento da sua aplicação na Gerencianet" default=""/>
+                <field name="client_id_development" type="text" size="60" label="Client ID Desenvolvimento" description="Informe a credencial Client ID de Desenvolvimento da sua aplicação na Gerencianet" default=""/>
+                <field name="client_secret_development" type="text" size="60" label="Client Secret Desenvolvimento" description="Informe a credencial Client Secret de Desenvolvimento da sua aplicação na Gerencianet" default=""/>
 
                 <field type="vmspacer" default="Produção" />
-                <field name="client_id_production" type="text" size="60"  label="Client ID Produção" description="Informe a credencial Client ID de Produção da sua aplicação na Gerencianet" default=""/>
-                <field name="client_secret_production" type="text" size="60"  label="Client Secret Produção" description="Informe a credencial Client Secret de Produção da sua aplicação na Gerencianet" default=""/>
+                <field name="client_id_production" type="text" size="60" label="Client ID Produção" description="Informe a credencial Client ID de Produção da sua aplicação na Gerencianet" default=""/>
+                <field name="client_secret_production" type="text" size="60" label="Client Secret Produção" description="Informe a credencial Client Secret de Produção da sua aplicação na Gerencianet" default=""/>
 
                 <field type="vmspacer" default="Identificador da Conta" />
-                <field name="payee_code" type="text" size="60"  label="Identificador da conta" description="Informe o identificador da sua conta Gerencianet" default=""/>
+                <field name="payee_code" type="text" size="60" label="Identificador da conta" description="Informe o identificador da sua conta Gerencianet" default=""/>
 
                 <field type="vmspacer" default="Campos Extras Obrigatórios" />
-                <field name="campo_logradouro" type="vmfield" size="30"  label="Campo Logradouro ( do endereço )" description="Nome do campo Logradouro ( endereço mesmo )" default="address_1"/>
-                <field name="campo_bairro" type="vmfield" size="30"  label="Campo Bairro" description="Nome do campo Bairro" default="bairro"/>
-                <field name="campo_numero" type="vmfield" size="30"  label="Campo Número ( do endereço )" description="Nome do campo Número do Endereço do usuário" default="numero"/>
-                <field name="campo_complemento" type="vmfield" size="30"  label="Campo Complemento ( do endereço )" description="Nome do campo Complemento do Endereço" default="address_2"/>
-                <field name="campo_telefone" type="vmfield" size="30"  label="Campo Telefone ( do cliente )" description="Nome do campo Telefone " default="phone_1"/>
-                <field name="campo_cpf" type="vmfield" size="30"  label="Campo CPF ( do cliente )" description="Nome do campo CPF " default="fax"/>
-                <field name="campo_data_nascimento" type="vmfield" size="30"  label="Campo Data de Nascimento ( do cliente )" description="Nome do campo Data de Nascimento " default="data_nascimento"/>
+                <field name="campo_logradouro" type="vmfield" size="30" label="Campo Logradouro ( do endereço )" description="Nome do campo Logradouro ( endereço mesmo )" default="address_1"/>
+                <field name="campo_bairro" type="vmfield" size="30" label="Campo Bairro" description="Nome do campo Bairro" default="bairro"/>
+                <field name="campo_numero" type="vmfield" size="30" label="Campo Número ( do endereço )" description="Nome do campo Número do Endereço do usuário" default="numero"/>
+                <field name="campo_complemento" type="vmfield" size="30" label="Campo Complemento ( do endereço )" description="Nome do campo Complemento do Endereço" default="address_2"/>
+                <field name="campo_telefone" type="vmfield" size="30" label="Campo Telefone ( do cliente )" description="Nome do campo Telefone " default="phone_1"/>
+                <field name="campo_cpf" type="vmfield" size="30" label="Campo CPF ( do cliente )" description="Nome do campo CPF " default="fax"/>
+                <field name="campo_data_nascimento" type="vmfield" size="30" label="Campo Data de Nascimento ( do cliente )" description="Nome do campo Data de Nascimento " default="data_nascimento"/>
 
                 <field type="vmspacer" default="Configuração de Status" />
                 <field name="status_cob_waiting" type="vmorderstate" default="A" label="Status de Cobrança Aguardando (WAITING)" description="Forma de pagamento selecionada. Aguardando a confirmação do pagamento." />
-                <field name="status_cob_paid" type="vmorderstate" default="C" label="Status de Cobrança Pago (PAID)" description="Pagamento Confirmado."  />
+                <field name="status_cob_paid" type="vmorderstate" default="C" label="Status de Cobrança Pago (PAID)" description="Pagamento Confirmado." />
                 <field name="status_cob_unpaid" type="vmorderstate" label="Status de Cobrança Não Pago (UNPAID)" description="Não foi possível confirmar o pagamento da cobrança." />
                 <field name="status_cob_refunded" type="vmorderstate" default="R" label="Status de Cobrança Reembolsado (REFUNDED)" description="Pagamento devolvido pelo lojista ou pelo intermediador Gerencianet." />
                 <field name="status_cob_contested" type="vmorderstate" label="Status de Cobrança Contestado (CONTESTED)" description="Pagamento em processo de contestação" />
